@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8">
+<style>
+:root{--ink:#191919;--muted:#5b5b66;--pink:#ff91ac;--pink2:#ffe3ea;--blue:#7cc4ff;--blue2:#e3f2ff;--green:#3fbf7f;--green2:#e2f7ec;--yellow:#ffc94d;--yellow2:#fff4d6;--red:#ff6b6b;--red2:#ffe5e5;--line:#e7e7ee;--bg:#fbfaf7}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:#ddd;padding:20px;display:flex;flex-direction:column;gap:30px;align-items:flex-start}
+.card{background:var(--bg);border-radius:28px;padding:44px 48px;width:1200px;position:relative;overflow:hidden}
+h1{font-size:64px;letter-spacing:-2px;line-height:1.02;font-weight:800}
+h2{font-size:38px;letter-spacing:-1px;font-weight:800;margin-bottom:6px}
+.sub{font-size:21px;color:var(--muted);margin-bottom:30px}
+.pill{display:inline-block;padding:6px 14px;border-radius:999px;font-weight:700;font-size:15px;background:var(--ink);color:#fff}
+.row{display:flex;gap:22px;align-items:stretch}
+.box{flex:1;border-radius:22px;padding:24px;border:3px solid var(--ink);background:#fff}
+.big{font-size:54px;line-height:1}
+.t{font-size:25px;font-weight:800;margin:10px 0 6px}
+.d{font-size:18px;color:var(--muted);line-height:1.4}
+.arrow{display:flex;align-items:center;font-size:44px;font-weight:800;color:var(--ink)}
+.icon{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px;border:3px solid var(--ink)}
+/* hero */
+#hero{background:var(--ink);color:#fff;padding:60px 64px;height:450px}
+#hero h1{color:#fff}
+#hero .sub{color:#c9c9d4;font-size:26px;margin-top:18px;max-width:640px}
+#hero .tag{display:flex;gap:10px;margin-top:26px}
+#hero .tag span{background:#2b2b31;border:2px solid #44444c;padding:8px 16px;border-radius:999px;font-size:17px;font-weight:600}
+.orb{position:absolute;right:90px;top:50px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff 0,#ffd0dc 18%,var(--pink) 45%,#c2185b 100%);box-shadow:0 0 90px rgba(255,145,172,.55)}
+.orb:after{content:"";position:absolute;inset:-26px;border-radius:50%;border:3px dashed #ff91ac88}
+.orbtext{position:absolute;right:90px;top:390px;width:280px;text-align:center;color:#c9c9d4;font-size:16px;letter-spacing:3px;font-weight:700}
+/* house */
+.house{border:4px dashed var(--ink);border-radius:30px;padding:30px 18px 20px;position:relative;background:#fff}
+.house .lbl{position:absolute;top:-19px;left:28px;background:var(--bg);padding:0 12px;font-weight:800;font-size:20px}
+.cloud{border:3px solid var(--ink);border-radius:22px;padding:18px 20px;background:var(--blue2);width:210px;flex:none}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.st{border:3px solid var(--ink);border-radius:22px;padding:20px 22px;background:#fff;position:relative}
+.num{width:46px;height:46px;border-radius:50%;background:var(--pink);border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
+.time{position:absolute;right:18px;top:22px;font-size:15px;font-weight:700;color:var(--muted);background:var(--line);padding:4px 10px;border-radius:999px}
+/* ram */
+.ram{display:flex;flex-direction:column;gap:14px}
+.rr{display:grid;grid-template-columns:200px 60px 1fr;align-items:center;gap:18px;border:3px solid var(--ink);border-radius:20px;padding:16px 22px;background:#fff}
+.dot{width:44px;height:44px;border-radius:50%;border:3px solid var(--ink)}
+.rr .gb{font-size:30px;font-weight:900}
+.rr .w{font-size:20px;font-weight:700}
+.rr .w small{display:block;font-weight:500;color:var(--muted);font-size:17px;margin-top:4px}
+code{font-family:"DejaVu Sans Mono",monospace;background:var(--line);padding:2px 8px;border-radius:8px;font-size:.9em;color:var(--ink)}
+/* models */
+.mc{flex:1;border:4px solid var(--ink);border-radius:26px;background:#fff;overflow:hidden}
+.mh{padding:22px 26px;border-bottom:4px solid var(--ink)}
+.mh .n{font-size:30px;font-weight:900}
+.mh .c{font-family:"DejaVu Sans Mono",monospace;font-size:20px;margin-top:6px}
+.mb{padding:20px 26px}
+.bar{display:grid;grid-template-columns:210px 1fr;align-items:center;margin:9px 0;font-size:19px;font-weight:600}
+.stars{display:flex;gap:6px}.stars i{width:30px;height:16px;border-radius:5px;border:2px solid var(--ink);background:#fff}.stars i.on{background:var(--ink)}
+.facts{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.facts span{background:var(--line);border-radius:999px;padding:6px 12px;font-size:16px;font-weight:600}
+.best{margin-top:16px;font-size:18px;line-height:1.45}
+/* tool calling */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.fb{border:3px solid var(--ink);border-radius:22px;padding:20px;background:#fff;position:relative}
+.bub{border-radius:16px;padding:12px 14px;font-size:17px;line-height:1.4;margin-top:10px;border:2px solid var(--ink)}
+.who{font-weight:800;font-size:19px;display:flex;align-items:center;gap:10px}
+.mini{width:40px;height:40px;border-radius:12px;border:3px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:22px}
+.tools{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+.tools span{border:3px solid var(--ink);border-radius:16px;padding:10px 16px;font-weight:700;font-size:18px;background:#fff}
+/* context */
+.pad{display:flex;gap:30px;align-items:flex-end}.pad>div{display:flex;flex-direction:column;align-items:center}
+.sheet{border:4px solid var(--ink);border-radius:16px;background:#fff;position:relative}
+.fill{position:absolute;left:0;right:0;bottom:0;border-top:3px solid var(--ink);border-radius:0 0 12px 12px}
+.cap{text-align:center;font-weight:800;font-size:22px;margin-top:12px}
+.capd{text-align:center;color:var(--muted);font-size:17px;margin-top:4px}
+/* wegweiser */
+.ww{display:flex;flex-direction:column;gap:14px}
+.wr{display:grid;grid-template-columns:1fr 70px 300px;align-items:center;gap:16px}
+.q{border:3px solid var(--ink);border-radius:20px;padding:18px 22px;background:#fff;font-size:21px;font-weight:700}
+.q small{display:block;font-weight:500;color:var(--muted);font-size:17px;margin-top:4px}
+.go{border:3px solid var(--ink);border-radius:20px;padding:18px 22px;font-size:22px;font-weight:900;text-align:center}
+#so-funktionierts .box{padding:20px 18px}#so-funktionierts .d{font-size:17px}#so-funktionierts .t{font-size:23px}#so-funktionierts .arrow{font-size:34px}
+</style></head><body>
+
+<!-- 1 HERO -->
+<div class="card" id="hero">
+  <span class="pill" style="background:var(--pink);color:var(--ink)">Anleitung für alle</span>
+  <h1 style="margin-top:22px">Jarvis on Nod</h1>
+  <div class="sub">Dein persönlicher KI-Helfer. Er wohnt auf deinem eigenen Computer – ohne Abo, ohne Cloud-Gehirn.</div>
+  <div class="tag"><span>Nod (n8n)</span><span>Ollama / LM Studio</span><span>Mac &amp; Windows</span></div>
+  <div class="orb"></div><div class="orbtext">LÄUFT BEI DIR ZU HAUSE</div>
+</div>
+
+<!-- 2 SO FUNKTIONIERTS -->
+<div class="card" id="so-funktionierts">
+  <h2>So funktioniert Jarvis</h2>
+  <div class="sub">Drei Teile arbeiten zusammen. Zwei davon wohnen auf deinem Computer.</div>
+  <div class="row" style="align-items:center;gap:14px">
+    <div class="house" style="flex:1">
+      <div class="lbl">🏠 Dein Computer</div>
+      <div class="row" style="gap:14px">
+        <div class="box" style="background:var(--yellow2)">
+          <div class="big">🙋</div><div class="t">Du</div>
+          <div class="d">Du schreibst oder sprichst: „Such mir ein Rezept und schreib eine Einkaufsliste.“</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="box" style="background:var(--pink2)">
+          <div class="big">🤲</div><div class="t">Nod = die Hände</div>
+          <div class="d">Die App. Sie hat Werkzeuge: Browser, Dateien, E-Mail, Kalender, Erinnerungen.</div>
+        </div>
+        <div class="arrow">⇄</div>
+        <div class="box" style="background:var(--green2)">
+          <div class="big">🧠</div><div class="t">Ollama = das Gehirn</div>
+          <div class="d">Das KI-Modell. Es denkt nach und entscheidet, welches Werkzeug Nod benutzen soll.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+      <div class="arrow" style="font-size:30px">⇢</div>
+    </div>
+    <div class="cloud">
+      <div class="big" style="font-size:40px">🌍</div>
+      <div class="t" style="font-size:22px">Internet</div>
+      <div class="d">Nur wenn nötig: für Websuche und Webseiten. Dein Gehirn bleibt zu Hause.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 3 FAHRPLAN -->
+<div class="card" id="fahrplan">
+  <h2>Dein Fahrplan in 6 Schritten</h2>
+  <div class="sub">Zusammen etwa 30–45 Minuten. Das meiste davon ist Warten auf den Download.</div>
+  <div class="steps">
+    <div class="st"><div class="num">1</div><span class="time">2 Min.</span><div class="t">Computer prüfen</div><div class="d">Wie viel Arbeitsspeicher (RAM) hast du?</div></div>
+    <div class="st"><div class="num">2</div><span class="time">5 Min.</span><div class="t">Ollama installieren</div><div class="d">Das Programm, in dem das Gehirn wohnt.</div></div>
+    <div class="st"><div class="num">3</div><span class="time">10–20 Min.</span><div class="t">Modell laden</div><div class="d">Das Gehirn selbst herunterladen (ca. 20 GB).</div></div>
+    <div class="st"><div class="num">4</div><span class="time">1 Min.</span><div class="t">Notizblock vergrößern</div><div class="d">In Ollama „Context length“ auf 64k stellen.</div></div>
+    <div class="st"><div class="num">5</div><span class="time">5–10 Min.</span><div class="t">Nod installieren</div><div class="d">Die App mit den Händen und Werkzeugen.</div></div>
+    <div class="st" style="background:var(--green2)"><div class="num" style="background:var(--green)">6</div><span class="time">2 Min.</span><div class="t">Verbinden &amp; loslegen</div><div class="d">Adresse eintippen: <code>http://localhost:11434/v1</code></div></div>
+  </div>
+</div>
+
+<!-- 4 RAM -->
+<div class="card" id="ram-ampel">
+  <h2>Welches Modell passt zu meinem Computer?</h2>
+  <div class="sub">Schau, wie viel Arbeitsspeicher (RAM) du hast. Mac: Apfel-Menü → „Über diesen Mac“.</div>
+  <div class="ram">
+    <div class="rr"><div class="gb">64 GB +</div><div class="dot" style="background:var(--green)"></div><div class="w">Perfekt. Beide Modelle laufen gut, du kannst wechseln.<small><code>qwen3.6:35b</code> für jeden Tag  ·  <code>qwen3.6:27b</code> zum Programmieren</small></div></div>
+    <div class="rr"><div class="gb">48 GB</div><div class="dot" style="background:var(--green)"></div><div class="w">Sehr gut. Nimm ein Modell zur Zeit.<small>Am besten <code>qwen3.6:35b</code>. Schließe große Programme, wenn es eng wird.</small></div></div>
+    <div class="rr"><div class="gb">24–32 GB</div><div class="dot" style="background:var(--yellow)"></div><div class="w">Geht, aber mit kleinerem Gehirn.<small><code>gpt-oss:20b</code> – klappt, macht aber öfter Fehler.</small></div></div>
+    <div class="rr"><div class="gb">unter 16 GB</div><div class="dot" style="background:var(--red)"></div><div class="w">Zu wenig für ein lokales Gehirn.<small>Nod kann stattdessen ein Online-Modell nutzen (kostet Geld pro Nutzung).</small></div></div>
+  </div>
+</div>
+
+<!-- 5 MODELLE -->
+<div class="card" id="modelle">
+  <h2>Die zwei Gehirne, die wir empfehlen</h2>
+  <div class="sub">Beide können Werkzeuge benutzen. Du brauchst am Anfang nur eins: Modell 1.</div>
+  <div class="row">
+    <div class="mc">
+      <div class="mh" style="background:var(--pink2)"><span class="pill">Modell 1 · Empfehlung</span><div class="n" style="margin-top:12px">⚡ Der schnelle Allrounder</div><div class="c">qwen3.6:35b</div></div>
+      <div class="mb">
+        <div class="bar">Tempo<div class="stars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+        <div class="bar">Recherche &amp; Websuche<div class="stars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+        <div class="bar">Schreiben<div class="stars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+        <div class="bar">Programmieren<div class="stars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+        <div class="facts"><span>~24 GB Download</span><span>ab 48 GB RAM</span><span>„MoE“: nur 3 Mrd. Teile denken gleichzeitig</span></div>
+        <div class="best"><b>Am besten für:</b> Alltag, Fragen, Recherche im Internet, E-Mails und Texte schreiben, Termine.</div>
+      </div>
+    </div>
+    <div class="mc">
+      <div class="mh" style="background:var(--blue2)"><span class="pill">Modell 2 · für Bauprojekte</span><div class="n" style="margin-top:12px">🛠️ Der gründliche Bauer</div><div class="c">qwen3.6:27b</div></div>
+      <div class="mb">
+        <div class="bar">Tempo<div class="stars"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div></div>
+        <div class="bar">Recherche &amp; Websuche<div class="stars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+        <div class="bar">Schreiben<div class="stars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div></div>
+        <div class="bar">Programmieren<div class="stars"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div></div>
+        <div class="facts"><span>~17 GB Download</span><span>ab 32 GB RAM, besser 48</span><span>„Dense“: alle 27 Mrd. Teile denken mit</span></div>
+        <div class="best"><b>Am besten für:</b> Apps und Webseiten bauen, Code verstehen, lange Aufgaben mit vielen Schritten.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 6 TOOL CALLING -->
+<div class="card" id="tool-calling">
+  <h2>Was ist „Tool Calling“?</h2>
+  <div class="sub">Das Gehirn kann nicht selbst ins Internet schauen. Aber es kann Nod bitten, ein Werkzeug zu benutzen.</div>
+  <div class="flow">
+    <div class="fb" style="background:var(--yellow2)"><div class="who"><span class="mini">🙋</span>1. Du fragst</div><div class="bub" style="background:#fff">„Wie wird das Wetter morgen in Köln?“</div></div>
+    <div class="fb" style="background:var(--green2)"><div class="who"><span class="mini">🧠</span>2. Gehirn denkt</div><div class="bub" style="background:#fff">„Das weiß ich nicht auswendig. Ich brauche das Werkzeug <b>Websuche</b>.“</div></div>
+    <div class="fb" style="background:var(--pink2)"><div class="who"><span class="mini">🤲</span>3. Nod handelt</div><div class="bub" style="background:#fff">Sucht im Internet nach „Wetter Köln morgen“ und gibt das Ergebnis zurück.</div></div>
+    <div class="fb" style="background:var(--yellow2)"><div class="who"><span class="mini">💬</span>4. Antwort</div><div class="bub" style="background:#fff">„Morgen in Köln: 12 °C und Regen. Nimm einen Schirm mit!“</div></div>
+  </div>
+  <div class="tools"><span>🔎 Websuche</span><span>🌐 Webseite lesen</span><span>📁 Dateien</span><span>📧 E-Mail</span><span>📅 Kalender</span><span>💻 Code ausführen</span></div>
+</div>
+
+<!-- 7 KONTEXT -->
+<div class="card" id="kontext">
+  <h2>Der Notizblock („Context length“)</h2>
+  <div class="sub">So viel Text kann sich das Gehirn auf einmal merken. Nod braucht einen großen Block!</div>
+  <div class="pad">
+    <div><div class="sheet" style="width:150px;height:110px"><div class="fill" style="height:100%;background:var(--red2)"></div></div><div class="cap">4k</div><div class="capd">Standard bei vielen Apps.<br><b style="color:#c62828">Zu klein!</b> Nod passt<br>nicht mal hinein.</div></div>
+    <div><div class="sheet" style="width:190px;height:190px"><div class="fill" style="height:62%;background:var(--yellow2)"></div></div><div class="cap">32k</div><div class="capd">Geht knapp.<br>Lange Aufgaben werden schwer.</div></div>
+    <div><div class="sheet" style="width:230px;height:290px;border-width:5px"><div class="fill" style="height:31%;background:var(--green2)"></div></div><div class="cap" style="color:#1b7f4b">64k ✔</div><div class="capd"><b>Das brauchst du.</b><br>Nods Anleitung nimmt ~20k ein,<br>der Rest ist für deine Aufgabe.</div></div>
+    <div style="flex:1;align-self:center;align-items:stretch"><div class="box" style="background:var(--green2)"><div class="t" style="margin-top:0">So stellst du es ein</div><div class="d" style="font-size:19px;color:var(--ink)">Ollama-Symbol oben in der Menüleiste<br>→ <b>Settings</b><br>→ <b>Context length</b><br>→ Regler auf <b>64k</b></div></div></div>
+  </div>
+</div>
+
+<!-- 8 WEGWEISER -->
+<div class="card" id="wegweiser">
+  <h2>Wo stehst du gerade?</h2>
+  <div class="sub">Spring direkt zu deinem Schritt. Du musst nicht alles lesen.</div>
+  <div class="ww">
+    <div class="wr"><div class="q">Ich habe noch nichts davon.<small>Kein Ollama, kein Nod, noch nie ein Terminal benutzt.</small></div><div class="arrow">→</div><div class="go" style="background:var(--yellow2)">Start bei Schritt 1</div></div>
+    <div class="wr"><div class="q">Ollama oder LM Studio ist schon installiert.<small>Aber noch kein passendes Modell.</small></div><div class="arrow">→</div><div class="go" style="background:var(--pink2)">Weiter bei Schritt 3</div></div>
+    <div class="wr"><div class="q">Ich habe auch schon ein Modell mit Tools.<small>z. B. qwen3.6, gpt-oss, gemma4</small></div><div class="arrow">→</div><div class="go" style="background:var(--blue2)">Weiter bei Schritt 4</div></div>
+    <div class="wr"><div class="q">Ich kenne mich aus und will nur die Befehle.<small>Terminal, Git, Docker sind kein Problem.</small></div><div class="arrow">→</div><div class="go" style="background:var(--green2)">Schnellstart für Profis</div></div>
+  </div>
+</div>
+
+</body></html>
