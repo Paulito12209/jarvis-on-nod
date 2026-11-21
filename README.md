@@ -11,6 +11,7 @@
   <a href="#checkliste">✅ Checkliste</a> ·
   <a href="#ein-befehl">⚡ Ein-Befehl-Weg</a> ·
   <a href="#schritt-1">🪜 Schritt für Schritt</a> ·
+  <a href="#sprechen">🎙️ Sprechen &amp; Hintergrund</a> ·
   <a href="#modelle">🧠 Welches Modell?</a> ·
   <a href="#profis">🧑‍💻 Für Profis</a> ·
   <a href="#hilfe">🆘 Hilfe</a>
@@ -290,6 +291,135 @@ Schreib Jarvis einfach, was du willst. Ganz normal, wie einer Person. Hier ein p
 
 ---
 
+<a id="sprechen"></a>
+## 🎙️ Jarvis hört zu und arbeitet im Hintergrund
+
+Ein echter Jarvis hört dir zu und arbeitet weiter, auch wenn du gerade nicht hinschaust. Vieles davon **kann Nod schon**. Hier erfährst du, was eingebaut ist, wie du es einschaltest und was dieses Repo noch dazulegt.
+
+<p align="center">
+  <img src="docs/bilder/sprechen.png" alt="Drei Wege, mit Jarvis zu sprechen: 1. Taste drücken in Nod (⌘ + D), alle Werkzeuge, nicht freihändig. 2. Sprachnachricht vom Handy über Telegram oder WhatsApp, alle Werkzeuge, Mac muss wach sein. 3. Freihand-Sprechmodus, experimentell, hört dauerhaft zu, Deutsch, aber keine Nod-Werkzeuge." width="100%" />
+</p>
+
+### Weg 1 · Mit Taste sprechen (in Nod eingebaut) ⏱️ 1 Min.
+
+1. Klicke in Nod in das Nachrichtenfeld.
+2. Drücke <kbd>⌘ Cmd</kbd> + <kbd>D</kbd> und sprich. (Oder halte das **Mikrofon** neben dem Senden-Knopf gedrückt.)
+3. Drücke nochmal <kbd>⌘ Cmd</kbd> + <kbd>D</kbd>. Jetzt kannst du dir die Aufnahme anhören oder gleich auf **Send** klicken.
+4. Beim ersten Mal fragt der Mac nach dem **Mikrofon**: **Erlauben**. Nod lädt dann einmal eine kleine Spracherkennung (ca. 80 MB). Sie läuft **auf deinem Mac**.
+
+**Jarvis soll auch laut antworten?** Öffne **Settings → Voice & audio**:
+- Bei **Spoken replies** wählst du, wann Nod mit Stimme antwortet (**Auto**, **After audio**, **Always** oder **Off**). Antworten spielen nicht von selbst ab. Du klickst auf **Play audio**.
+- Unter **Free voices** → **Download** holst du kostenlose Stimmen auf deinen Mac (ca. 180 MB).
+
+> ⚠️ **Ehrlicher Hinweis:** Die kostenlosen lokalen Stimmen sprechen Englisch, Spanisch, Französisch, Hindi, Italienisch und Portugiesisch, aber **kein Deutsch**. Eine deutsche Stimme bekommst du nur über einen Online-Dienst (OpenAI, ElevenLabs oder OpenRouter). Der kostet Geld pro Antwort, und der Text der Antwort geht an diesen Dienst. Deine **Spracherkennung** bleibt trotzdem lokal, wenn du eine lokale Stimme gewählt hast.
+
+### Weg 2 · Sprachnachricht vom Handy (in Nod eingebaut) ⏱️ 10 Min.
+
+Du bist unterwegs und willst Jarvis etwas sagen? Verbinde Nod mit **Telegram** oder **WhatsApp**. Dann schickst du einfach eine Sprachnachricht, wie an einen Freund. Es ist dasselbe Gespräch, dasselbe Gedächtnis, dieselben Aufgaben wie in der App.
+
+1. Klicke in Nod links auf **Channels**.
+2. Klicke bei **Telegram** (am einfachsten) oder **WhatsApp** auf **Connect** und folge den Schritten.
+
+Wichtig: Nod antwortet nur, solange **Nod auf deinem Mac läuft** und der Mac **wach** ist. Anleitung mit allen Details: [Nod: Telegram und WhatsApp (Englisch)](https://nod.n8n.io/docs/use/channels/)
+
+### Weg 3 · Freihand-Sprechmodus (experimentell) 🧪
+
+Das ist das Extra aus diesem Repo. Jarvis **hört dauerhaft zu**, solange das Fenster offen ist. Du sprichst einfach los, er antwortet mit Stimme, und du kannst ihm **ins Wort fallen**. Er versteht und spricht **Deutsch**, und er benutzt **dasselbe Gehirn** wie Nod (dein Ollama-Modell). Alles läuft auf deinem Mac.
+
+> 🧪 **Bitte lesen:** Dieser Modus ist **neu und auf einem echten Mac noch nicht getestet**. Geprüft ist bisher nur, dass sich alles installieren lässt und die Einstellungen stimmen. Ob Mikrofon, Stimme und Unterbrechen auf deinem Mac flüssig laufen, wissen wir noch nicht. Erzähl uns gern, wie es klappt!
+>
+> 🧰 **Der Sprechmodus hat keine Nod-Werkzeuge.** Er kann reden, erklären, Ideen sammeln und Fragen beantworten. Er kann aber **keine E-Mails schreiben, nicht im Internet suchen und keine Termine eintragen**. Dafür nimmst du Weg 1 oder 2.
+
+**Du brauchst:** einen Mac mit Apple-Chip, mindestens 32 GB RAM (besser 48 GB oder mehr), Ollama mit einem Modell (siehe [Schritt 1–4](#schritt-1)) und am besten **Kopfhörer**.
+
+1. Öffne das **Terminal** (<kbd>⌘ Cmd</kbd> + <kbd>Leertaste</kbd> → „Terminal“).
+2. Füge diese Zeile ein und drücke <kbd>Enter</kbd>:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-sprechen.sh | bash
+```
+
+3. Bei Fragen drückst du <kbd>Enter</kbd> für „Ja“. Das Skript lädt einige GB Programme.
+4. Am Ende fragt es, ob es den Sprechmodus starten soll. Beim **ersten Start** lädt es noch die Sprach-Modelle (mehrere GB). Das dauert ein paar Minuten.
+5. Der Mac fragt nach dem **Mikrofon**: **Erlauben**. Dann sprich einfach los: „Hallo Jarvis, was kann ich heute Abend kochen?“
+6. **Beenden:** <kbd>Ctrl</kbd> + <kbd>C</kbd>. **Später wieder starten:** Doppelklick auf **Jarvis sprechen** auf dem Schreibtisch.
+
+<details>
+<summary><b>Was macht dieser Befehl genau?</b></summary>
+<br />
+
+Du kannst den ganzen Helfer lesen: [`scripts/jarvis-sprechen.sh`](scripts/jarvis-sprechen.sh). Er:
+
+1. prüft, ob du einen Mac mit Apple-Chip und genug RAM hast,
+2. prüft, ob Ollama läuft, und sucht dein Modell (zuerst `qwen3.6:35b`),
+3. installiert bei Bedarf den Python-Helfer **uv** (offizieller Installer von astral.sh, ohne Administrator-Passwort),
+4. installiert das Open-Source-Projekt **[speech-to-speech](https://github.com/huggingface/speech-to-speech)** von Hugging Face (Apache 2.0) in den Ordner `~/.jarvis-sprechen`,
+5. legt einen Startbefehl an und auf Wunsch ein Symbol auf dem Schreibtisch.
+
+Er löscht nichts und ändert nichts an Nod oder Ollama.
+
+**Ohne Kopfhörer?** Dann hört Jarvis sich sonst selbst. Richte ihn so ein, dass das Mikrofon stumm ist, solange er spricht. (Dann kannst du ihn allerdings nicht unterbrechen.)
+```sh
+curl -fsSL https://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-sprechen.sh | bash -s -- --lautsprecher
+```
+
+**Nur prüfen, ohne etwas zu ändern:**
+```sh
+curl -fsSL https://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-sprechen.sh | bash -s -- --check
+```
+
+**Alles wieder entfernen:** Lösche den Ordner `~/.jarvis-sprechen` und das Symbol **Jarvis sprechen** auf dem Schreibtisch.
+</details>
+
+<details>
+<summary><b>Warum ist das nicht so flüssig wie Grok oder ChatGPT Voice?</b></summary>
+<br />
+
+Apps wie Grok Voice laufen **in der Cloud** auf riesigen Grafikkarten. Dort hört und spricht oft **ein einziges Modell** gleichzeitig („Full-Duplex“). Auf dem Mac arbeitet dagegen eine **Kette** aus kleinen Helfern:
+
+**Ohr** (erkennt, wann du sprichst) → **Text** (schreibt mit, was du sagst) → **Gehirn** (dein Ollama-Modell) → **Mund** (liest die Antwort vor).
+
+Das ist etwa eine Sekunde langsamer, aber dafür bleibt alles privat und kostet nichts. Echte Full-Duplex-Modelle für den Mac gibt es schon (z. B. [Kyutai Moshi](https://huggingface.co/kyutai/moshiko-mlx-q8)), aber die können heute nur Englisch und keine Werkzeuge benutzen.
+</details>
+
+### Im Hintergrund arbeiten (in Nod eingebaut)
+
+<p align="center">
+  <img src="docs/bilder/hintergrund.png" alt="Jarvis arbeitet weiter, während du etwas anderes machst: Aufgaben laufen parallel, Zeitpläne laufen von allein, und Nod meldet sich von selbst, wenn in Mail oder Kalender etwas wichtig ist. Dafür muss Nod geöffnet, der Mac wach und das Internet an sein." width="100%" />
+</p>
+
+- 📋 **Aufgaben:** Gib Nod etwas Größeres („Vergleiche drei Hotels in Rom“). Nod startet eine eigene **Aufgabe** und du kannst währenddessen weiter chatten oder eine zweite Aufgabe starten. Alle offenen Aufgaben siehst du links unter **Scheduled**.
+- ⏰ **Zeitpläne:** Sag einfach, wann: „Jeden Werktag um 8 Uhr: Fasse meinen Kalender und wichtige Mails zusammen.“ Nod speichert das und erledigt es von allein.
+- 💡 **Von selbst melden:** Schalte unter **Settings → Notifications** die **Automatic preparation** ein (sie ist am Anfang aus). Dann schaut Nod in deine verbundene Mail und deinen Kalender und meldet sich, wenn etwas wirklich wichtig ist, oft schon mit einem fertigen Entwurf.
+
+**Damit das klappt, muss Nod laufen.** Wenn du das Nod-Fenster schließt, läuft Nod weiter. Wenn du Nod **beendest** oder der Mac **schläft**, pausiert alles.
+
+**Tipp für den Mac mini:** Öffne **Systemeinstellungen → Energie** und schalte **„Automatischen Ruhezustand bei ausgeschaltetem Display verhindern“** ein. Dann bleibt dein Jarvis wach. <sub>(Die Bezeichnung kann je nach macOS-Version leicht anders sein.)</sub>
+
+<details>
+<summary><b>🧑‍💻 Für Profis: Wie passt das zusammen? Und warum kein Fork?</b></summary>
+<br />
+
+```
+                 ┌──────────── dein Mac ─────────────┐
+ ⌘+D / Telegram ─┼─▶ Nod (Werkzeuge, Aufgaben,       │
+                 │   Zeitpläne, Nudges) ──┐          │
+                 │                        ▼          │
+ Mikrofon ───────┼─▶ speech-to-speech ─▶ Ollama      │
+ Lautsprecher ◀──┼── (VAD, Parakeet,     (dasselbe   │
+                 │    Qwen3-TTS, MLX)     Modell)    │
+                 └───────────────────────────────────┘
+```
+
+- **Nod** bringt Push-to-talk (whisper-base lokal über ONNX), Telegram/WhatsApp-Sprachnachrichten, Aufgaben, Zeitpläne und Nudges mit. Es hat **keine öffentliche Schnittstelle** für „Sprache rein, Antwort raus“. Die Web-App spricht intern mit `/api/messages` und `/api/events`. Das ist aber nicht dokumentiert und braucht bei einer Quellcode-Installation `NOD_AUTH_TOKEN`. Darauf bauen wir bewusst (noch) nicht auf, weil es bei jedem Nod-Update brechen kann.
+- **Der Sprechmodus** ist [speech-to-speech](https://github.com/huggingface/speech-to-speech) `1.1.0` mit `--llm_backend chat-completions` gegen `http://localhost:11434/v1`, `--responses_api_reasoning_effort none` (schnelle Antworten ohne „Nachdenken“), `--qwen3_tts_language german` und einem deutschen System-Prompt. Unterbrechen (Barge-in) ist standardmäßig an. Mit `--lautsprecher` setzt das Skript `--local_audio_block_mic_during_playback true`.
+- **Kein Fork nötig:** Beide Teile laufen nebeneinander und teilen sich nur das Ollama-Modell. Ollama lädt es nur einmal in den Speicher. Ein Nod-Fork wäre nur für Freihand-Sprechen direkt in der Nod-App nötig, und den müsste man bei jedem Update nachziehen.
+- **Alternativen**, die wir angeschaut haben: [Pipecat](https://github.com/kwindla/macos-local-voice-agents) (lokales Mac-Beispiel mit MLX Whisper, Silero VAD und Kokoro, OpenAI-kompatibles LLM, für Bastler), [Kyutai Moshi MLX](https://huggingface.co/kyutai/moshiko-mlx-q8) (echtes Full-Duplex, nur Englisch, keine Werkzeuge), [OpenJarvis](https://github.com/open-jarvis/OpenJarvis) `jarvis chat --voice` (aufnehmen bis zur Sprechpause, faster-whisper + Kokoro, kein Wake-Word) und [mlx-audio](https://github.com/Blaizzy/mlx-audio) (nur Sprach-Bausteine, kein Gesprächsmodus).
+- **Noch nicht dabei:** Wake-Word („Hey Jarvis“) und Übergabe vom Sprechmodus an Nod-Werkzeuge.
+</details>
+
+---
+
 <a id="modelle"></a>
 ## 🧠 Welches Modell soll ich nehmen?
 
@@ -459,6 +589,9 @@ Genau nachlesen: [Nod: Your data and privacy](https://nod.n8n.io/docs/trust/priv
 | **Terminal** | Ein Fenster, in das man Befehle tippt statt zu klicken. |
 | **localhost** | „Dieser Computer hier.“ `localhost:11434` heißt: Ollama auf deinem Computer. |
 | **Repo** | Ein Projekt-Ordner auf GitHub. Wie dieser hier. |
+| **Duplex / Full-Duplex** | Hören und Sprechen gleichzeitig, wie bei einem Telefonat. Du kannst dazwischenreden. |
+| **Push-to-talk** | Taste drücken, sprechen, loslassen. Wie ein Walkie-Talkie. |
+| **Wake-Word** | Ein Weckwort wie „Hey Siri“. Erst danach hört der Helfer richtig zu. |
 
 ---
 
@@ -477,6 +610,7 @@ jarvis-on-nod/
 ├── README.md                 ← diese Anleitung
 ├── scripts/
 │   ├── jarvis-mac.sh         ← Helfer-Befehl für den Mac (einrichten + prüfen)
+│   ├── jarvis-sprechen.sh    ← Freihand-Sprechmodus (experimentell)
 │   └── jarvis-windows.ps1    ← Helfer-Befehl für Windows 11
 ├── docs/
 │   ├── bilder/               ← alle Bilder dieser Anleitung
