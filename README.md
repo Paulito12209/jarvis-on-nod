@@ -1,506 +1,506 @@
-<palign="center">
-<imgsrc="docs/bilder/hero.png"alt="JarvisonNod:DeinpersönlicherKI-Helfer.ErwohntaufdeinemeigenenComputer."width="100%"/>
+<p align="center">
+  <img src="docs/bilder/hero.png" alt="Jarvis on Nod: Dein persönlicher KI-Helfer. Er wohnt auf deinem eigenen Computer." width="100%" />
 </p>
 
-<palign="center">
-<b>DieeinfachsteAnleitung,umdireineneigenenKI-HelferaufdeinenComputerzuholen.</b><br/>
-OhneProgrammieren.OhneAbo.DeinGehirnbleibtzuHause.
+<p align="center">
+  <b>Die einfachste Anleitung, um dir einen eigenen KI-Helfer auf deinen Computer zu holen.</b><br />
+  Ohne Programmieren. Ohne Abo. Dein Gehirn bleibt zu Hause.
 </p>
 
-<palign="center">
-<ahref="#checkliste">✅Checkliste</a>·
-<ahref="#ein-befehl">⚡Ein-Befehl-Weg</a>·
-<ahref="#schritt-1">🪜SchrittfürSchritt</a>·
-<ahref="#modelle">🧠WelchesModell?</a>·
-<ahref="#profis">🧑‍💻FürProfis</a>·
-<ahref="#hilfe">🆘Hilfe</a>
+<p align="center">
+  <a href="#checkliste">✅ Checkliste</a> ·
+  <a href="#ein-befehl">⚡ Ein-Befehl-Weg</a> ·
+  <a href="#schritt-1">🪜 Schritt für Schritt</a> ·
+  <a href="#modelle">🧠 Welches Modell?</a> ·
+  <a href="#profis">🧑‍💻 Für Profis</a> ·
+  <a href="#hilfe">🆘 Hilfe</a>
 </p>
 
 ---
 
-##👋Wasistdashier?
+## 👋 Was ist das hier?
 
-Stelldirvor,duhasteinenHelferwie**Jarvis**ausIronMan.Dusagstihm,wasdubrauchst,undererledigtes:imInternetsuchen,Texteschreiben,Termineprüfen,Dateienordnen.
+Stell dir vor, du hast einen Helfer wie **Jarvis** aus Iron Man. Du sagst ihm, was du brauchst, und er erledigt es: im Internet suchen, Texte schreiben, Termine prüfen, Dateien ordnen.
 
-DiesesRepo(„Repo“heißteinfach:einProjekt-OrdnerimInternet)isteine**Anleitung**.Siezeigtdir,wiedusoeinenHelferauf**deinemeigenenComputer**einrichtest.DafürnehmenwirzweikostenloseProgramme:
+Dieses Repo („Repo“ heißt einfach: ein Projekt-Ordner im Internet) ist eine **Anleitung**. Sie zeigt dir, wie du so einen Helfer auf **deinem eigenen Computer** einrichtest. Dafür nehmen wir zwei kostenlose Programme:
 
-|Teil|Wasesist|Vergleich|
+| Teil | Was es ist | Vergleich |
 |---|---|---|
-|🤲**[Nod](https://github.com/n8n-io/nod)**|EineAppvondenMachernvonn8n.SiehatWerkzeuge:Browser,Dateien,E-Mail,Kalender,Erinnerungen.|Die**Hände**|
-|🧠**[Ollama](https://ollama.com)**(oder**[LMStudio](https://lmstudio.ai)**)|EinProgramm,daseinKI-ModellaufdeinemComputerlaufenlässt.|Das**Gehirn**|
+| 🤲 **[Nod](https://github.com/n8n-io/nod)** | Eine App von den Machern von n8n. Sie hat Werkzeuge: Browser, Dateien, E-Mail, Kalender, Erinnerungen. | Die **Hände** |
+| 🧠 **[Ollama](https://ollama.com)** (oder **[LM Studio](https://lmstudio.ai)**) | Ein Programm, das ein KI-Modell auf deinem Computer laufen lässt. | Das **Gehirn** |
 
-Zusammensindsiedein**Jarvis**.🎉
+Zusammen sind sie dein **Jarvis**. 🎉
 
-<palign="center">
-<imgsrc="docs/bilder/so-funktionierts.png"alt="SofunktioniertJarvis:Duschreibst,NodhatdieWerkzeuge,OllamaistdasGehirn.BeidesläuftaufdeinemComputer.InsInternetgehtesnurfürWebsuche."width="100%"/>
+<p align="center">
+  <img src="docs/bilder/so-funktionierts.png" alt="So funktioniert Jarvis: Du schreibst, Nod hat die Werkzeuge, Ollama ist das Gehirn. Beides läuft auf deinem Computer. Ins Internet geht es nur für Websuche." width="100%" />
 </p>
 
-**Warumlokal?**
--🔒DeineFragenundGesprächegehennichtaneinefremdeKI-Firma.
--💶EskostetnichtsproFrage.KeinAbo.
--✈️DasGehirnfunktioniertauchohneInternet.(FürWebsuchebrauchstdunatürlichInternet.)
+**Warum lokal?**
+- 🔒 Deine Fragen und Gespräche gehen nicht an eine fremde KI-Firma.
+- 💶 Es kostet nichts pro Frage. Kein Abo.
+- ✈️ Das Gehirn funktioniert auch ohne Internet. (Für Websuche brauchst du natürlich Internet.)
 
 ---
 
-<aid="checkliste"></a>
-##✅Checkliste:Wasbrauchstdu?
+<a id="checkliste"></a>
+## ✅ Checkliste: Was brauchst du?
 
-Hakeab,wasdu**schonhast**.DannspringstdudirektzumerstenPunkt,derfehlt.
+Hake ab, was du **schon hast**. Dann springst du direkt zum ersten Punkt, der fehlt.
 
-||Was|Wofür|Soprüfstdues|Fehlt?Dann…|
+| | Was | Wofür | So prüfst du es | Fehlt? Dann … |
 |---|---|---|---|---|
-|☐|**MacmitApple-Chip**(M1–M5)und**48GBRAM**odermehr<br><sub>Windows11gehtauch(Vorschau-Version)</sub>|DamitdasGehirnschnellgenugdenkt|Apfel-Menü→**ÜberdiesenMac**|[Schritt1](#schritt-1)|
-|☐|**ca.40GBfreierSpeicherplatz**|FürModell(~24GB)undNod(~2GB)|Apfel-Menü→**Systemeinstellungen**→**Allgemein**→**Speicher**|Platzschaffen|
-|☐|**Ollama**(oderLMStudio)|LässtdasGehirnlaufen|Lama-Symbol🦙obeninderMenüleiste|[Schritt2](#schritt-2)|
-|☐|**EinModellmit„Tools“**,z.B.`qwen3.6:35b`|DasGehirnselbst|ImTerminal:`ollamalist`|[Schritt3](#schritt-3)|
-|☐|**Kontextauf64k**(Ollama-Einstellung)|DamitNodgenug„Notizblock“hat|ImTerminal:`ollamaps`→Spalte**CONTEXT**|[Schritt4](#schritt-4)|
-|☐|**Nod-App**|DieHändemitdenWerkzeugen|Ordner**Programme**→**Nod**|[Schritt5](#schritt-5)|
-|☐|**NodmitOllamaverbunden**|DamitHändeundGehirnzusammenarbeiten|InNod:**Settings→Models**zeigt`localhost:11434`|[Schritt6](#schritt-6)|
+| ☐ | **Mac mit Apple-Chip** (M1–M5) und **48 GB RAM** oder mehr<br><sub>Windows 11 geht auch (Vorschau-Version)</sub> | Damit das Gehirn schnell genug denkt | Apfel-Menü → **Über diesen Mac** | [Schritt 1](#schritt-1) |
+| ☐ | **ca. 40 GB freier Speicherplatz** | Für Modell (~24 GB) und Nod (~2 GB) | Apfel-Menü → **Systemeinstellungen** → **Allgemein** → **Speicher** | Platz schaffen |
+| ☐ | **Ollama** (oder LM Studio) | Lässt das Gehirn laufen | Lama-Symbol 🦙 oben in der Menüleiste | [Schritt 2](#schritt-2) |
+| ☐ | **Ein Modell mit „Tools“**, z. B. `qwen3.6:35b` | Das Gehirn selbst | Im Terminal: `ollama list` | [Schritt 3](#schritt-3) |
+| ☐ | **Kontext auf 64k** (Ollama-Einstellung) | Damit Nod genug „Notizblock“ hat | Im Terminal: `ollama ps` → Spalte **CONTEXT** | [Schritt 4](#schritt-4) |
+| ☐ | **Nod-App** | Die Hände mit den Werkzeugen | Ordner **Programme** → **Nod** | [Schritt 5](#schritt-5) |
+| ☐ | **Nod mit Ollama verbunden** | Damit Hände und Gehirn zusammenarbeiten | In Nod: **Settings → Models** zeigt `localhost:11434` | [Schritt 6](#schritt-6) |
 
->💡**DubrauchstKEINGitHub-Konto**,keinGit,keinDockerundkeinNode.js.DasallesbringtdieNod-Appselbstmit.
+> 💡 **Du brauchst KEIN GitHub-Konto**, kein Git, kein Docker und kein Node.js. Das alles bringt die Nod-App selbst mit.
 
-<palign="center">
-<imgsrc="docs/bilder/wegweiser.png"alt="Wostehstdugerade?Neu:Schritt1.Ollamaschonda:Schritt3.Modellschonda:Schritt4.Profi:SchnellstartfürProfis."width="100%"/>
+<p align="center">
+  <img src="docs/bilder/wegweiser.png" alt="Wo stehst du gerade? Neu: Schritt 1. Ollama schon da: Schritt 3. Modell schon da: Schritt 4. Profi: Schnellstart für Profis." width="100%" />
 </p>
 
-**Direktspringen:**[Ichbinganzneu→Schritt1](#schritt-1)·[Ollamaistschonda→Schritt3](#schritt-3)·[Modellistschonda→Schritt4](#schritt-4)·[IchbinProfi→Schnellstart](#profis)
+**Direkt springen:** [Ich bin ganz neu → Schritt 1](#schritt-1) · [Ollama ist schon da → Schritt 3](#schritt-3) · [Modell ist schon da → Schritt 4](#schritt-4) · [Ich bin Profi → Schnellstart](#profis)
 
 ---
 
-<aid="ein-befehl"></a>
-##⚡DerEin-Befehl-Weg(Mac)
+<a id="ein-befehl"></a>
+## ⚡ Der Ein-Befehl-Weg (Mac)
 
-DuwillstnichtallesvonHandmachen?Dannlassden**Helfer-Befehl**dieArbeiterledigen.ErprüftdeinenMac,suchtdaspassendeModellaus,lädtesherunter,stelltallesrichtigeinundtestetes.
+Du willst nicht alles von Hand machen? Dann lass den **Helfer-Befehl** die Arbeit erledigen. Er prüft deinen Mac, sucht das passende Modell aus, lädt es herunter, stellt alles richtig ein und testet es.
 
-1.Drücke<kbd>⌘Cmd</kbd>+<kbd>Leertaste</kbd>,tippe**Terminal**unddrücke<kbd>Enter</kbd>.
-2.KopieredieseZeile,fügesieimTerminalein(<kbd>⌘Cmd</kbd>+<kbd>V</kbd>)unddrücke<kbd>Enter</kbd>:
+1. Drücke <kbd>⌘ Cmd</kbd> + <kbd>Leertaste</kbd>, tippe **Terminal** und drücke <kbd>Enter</kbd>.
+2. Kopiere diese Zeile, füge sie im Terminal ein (<kbd>⌘ Cmd</kbd> + <kbd>V</kbd>) und drücke <kbd>Enter</kbd>:
 
 ```sh
-curl-fsSLhttps://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-mac.sh|bash
+curl -fsSL https://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-mac.sh | bash
 ```
 
-3.Lies,wasaufdemBildschirmsteht.WenneineFragekommt,drücke<kbd>Enter</kbd>für„Ja“.
-4.AmEndesteht,wasduinNodeintippenmusst.Dasist[Schritt6](#schritt-6).
+3. Lies, was auf dem Bildschirm steht. Wenn eine Frage kommt, drücke <kbd>Enter</kbd> für „Ja“.
+4. Am Ende steht, was du in Nod eintippen musst. Das ist [Schritt 6](#schritt-6).
 
 <details>
-<summary><b>WasmachtdieserBefehlgenau?(Istdassicher?)</b></summary>
-<br/>
+<summary><b>Was macht dieser Befehl genau? (Ist das sicher?)</b></summary>
+<br />
 
-GuteFrage!MansolltenieblindBefehleausdemInternetausführen.DukannstdenganzenHelferhierlesen:[`scripts/jarvis-mac.sh`](scripts/jarvis-mac.sh).Er:
+Gute Frage! Man sollte nie blind Befehle aus dem Internet ausführen. Du kannst den ganzen Helfer hier lesen: [`scripts/jarvis-mac.sh`](scripts/jarvis-mac.sh). Er:
 
-1.liest,wievielRAMdeinMachat,
-2.wähltdaspassendeModell(48GB+→`qwen3.6:35b`,darunter→`gpt-oss:20b`),
-3.hilftdir,Ollamazuinstallieren(überdieoffizielleWebseiteoderHomebrew),
-4.stelltdenKontextauf64k(`OLLAMA_CONTEXT_LENGTH=65536`),
-5.lädtdasModellundmachteinen**echtenWerkzeug-Test**,
-6.fragtdich,oberdie**offizielle**Nod-Appinstallierensoll(mitdemInstallervonn8n).
+1. liest, wie viel RAM dein Mac hat,
+2. wählt das passende Modell (48 GB+ → `qwen3.6:35b`, darunter → `gpt-oss:20b`),
+3. hilft dir, Ollama zu installieren (über die offizielle Webseite oder Homebrew),
+4. stellt den Kontext auf 64k (`OLLAMA_CONTEXT_LENGTH=65536`),
+5. lädt das Modell und macht einen **echten Werkzeug-Test**,
+6. fragt dich, ob er die **offizielle** Nod-App installieren soll (mit dem Installer von n8n).
 
-ErlöschtnichtsundbrauchtkeinAdministrator-Passwort.
+Er löscht nichts und braucht kein Administrator-Passwort.
 
-**Nurprüfen,ohneetwaszuändern:**
+**Nur prüfen, ohne etwas zu ändern:**
 ```sh
-curl-fsSLhttps://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-mac.sh|bash-s----check
+curl -fsSL https://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-mac.sh | bash -s -- --check
 ```
 
-**LieberdasProgrammier-Modell?**
+**Lieber das Programmier-Modell?**
 ```sh
-curl-fsSLhttps://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-mac.sh|bash-s----modelqwen3.6:27b
+curl -fsSL https://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-mac.sh | bash -s -- --model qwen3.6:27b
 ```
 
-**Windows11?**Öffne**PowerShell**(nichtalsAdministrator)undfügeein:
+**Windows 11?** Öffne **PowerShell** (nicht als Administrator) und füge ein:
 ```powershell
-irmhttps://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-windows.ps1|iex
+irm https://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-windows.ps1 | iex
 ```
 </details>
 
 ---
 
-##🪜SchrittfürSchritt
+## 🪜 Schritt für Schritt
 
-Lieberallesselbstmachenundverstehen?Super!HieristdeinFahrplan.
+Lieber alles selbst machen und verstehen? Super! Hier ist dein Fahrplan.
 
-<palign="center">
-<imgsrc="docs/bilder/fahrplan.png"alt="Fahrplanin6Schritten:Computerprüfen,Ollamainstallieren,Modellladen,Notizblockvergrößern,Nodinstallieren,verbindenundloslegen.Zusammenetwa30bis45Minuten."width="100%"/>
+<p align="center">
+  <img src="docs/bilder/fahrplan.png" alt="Fahrplan in 6 Schritten: Computer prüfen, Ollama installieren, Modell laden, Notizblock vergrößern, Nod installieren, verbinden und loslegen. Zusammen etwa 30 bis 45 Minuten." width="100%" />
 </p>
 
-<aid="schritt-1"></a>
-###Schritt1·IstmeinComputerstarkgenug?⏱️2Min.
+<a id="schritt-1"></a>
+### Schritt 1 · Ist mein Computer stark genug? ⏱️ 2 Min.
 
-EinKI-Gehirnbrauchtviel**Arbeitsspeicher**(RAM).DasistderPlatz,andemderComputergeradedenkt.Jemehr,destogrößerundklügerdarfdasGehirnsein.
+Ein KI-Gehirn braucht viel **Arbeitsspeicher** (RAM). Das ist der Platz, an dem der Computer gerade denkt. Je mehr, desto größer und klüger darf das Gehirn sein.
 
-**Sofindestduesheraus(Mac):**
-1.Klickeobenlinksaufdas**Apfel-Symbol**.
-2.Klickeauf**ÜberdiesenMac**.
-3.Schaubei**Chip**(sollte„AppleM…“sein)und**Speicher**(dasistderRAM).
+**So findest du es heraus (Mac):**
+1. Klicke oben links auf das **Apfel-Symbol**.
+2. Klicke auf **Über diesen Mac**.
+3. Schau bei **Chip** (sollte „Apple M…“ sein) und **Speicher** (das ist der RAM).
 
-<palign="center">
-<imgsrc="docs/bilder/ram-ampel.png"alt="RAM-Ampel:64GBundmehrperfekt,48GBsehrgut,24bis32GBgehtmitkleineremModell,unter16GBzuwenig."width="100%"/>
+<p align="center">
+  <img src="docs/bilder/ram-ampel.png" alt="RAM-Ampel: 64 GB und mehr perfekt, 48 GB sehr gut, 24 bis 32 GB geht mit kleinerem Modell, unter 16 GB zu wenig." width="100%" />
 </p>
 
->🧮**Beispiel:**EinMacminiM5Promit64GBistperfekt.ErkannbeideempfohlenenModellelaufenlassen.Mit48GBklapptesauchsehrgut.
+> 🧮 **Beispiel:** Ein Mac mini M5 Pro mit 64 GB ist perfekt. Er kann beide empfohlenen Modelle laufen lassen. Mit 48 GB klappt es auch sehr gut.
 
-<aid="schritt-2"></a>
-###Schritt2·DasGehirn-Programminstallieren⏱️5Min.
+<a id="schritt-2"></a>
+### Schritt 2 · Das Gehirn-Programm installieren ⏱️ 5 Min.
 
-DuhastzweiMöglichkeiten.**NimmWegA,wennduunsicherbist.**
+Du hast zwei Möglichkeiten. **Nimm Weg A, wenn du unsicher bist.**
 
-<detailsopen>
-<summary><b>WegA:Ollama(empfohlen)</b></summary>
-<br/>
+<details open>
+<summary><b>Weg A: Ollama (empfohlen)</b></summary>
+<br />
 
-1.Öffne**[ollama.com/download](https://ollama.com/download)**.
-2.Klickeauf**DownloadformacOS**.
-3.ÖffnedieheruntergeladeneDateiundziehe**Ollama**indenOrdner**Programme**.
-4.StarteOllama.ObenrechtsinderMenüleisteerscheinteinkleines**Lama**🦙.Dasheißt:Ollamaläuft.
+1. Öffne **[ollama.com/download](https://ollama.com/download)**.
+2. Klicke auf **Download for macOS**.
+3. Öffne die heruntergeladene Datei und ziehe **Ollama** in den Ordner **Programme**.
+4. Starte Ollama. Oben rechts in der Menüleiste erscheint ein kleines **Lama** 🦙. Das heißt: Ollama läuft.
 
-**Test:**ÖffnedasTerminal(<kbd>⌘Cmd</kbd>+<kbd>Leertaste</kbd>→„Terminal“)undtippe:
+**Test:** Öffne das Terminal (<kbd>⌘ Cmd</kbd> + <kbd>Leertaste</kbd> → „Terminal“) und tippe:
 ```sh
-ollama--version
+ollama --version
 ```
-SiehstdueineZahlwie`ollamaversionis0.x.x`?Perfekt!✅
+Siehst du eine Zahl wie `ollama version is 0.x.x`? Perfekt! ✅
 </details>
 
 <details>
-<summary><b>WegB:LMStudio(mitschönerOberfläche)</b></summary>
-<br/>
+<summary><b>Weg B: LM Studio (mit schöner Oberfläche)</b></summary>
+<br />
 
-1.Öffne**[lmstudio.ai](https://lmstudio.ai)**undladedieMac-Version.
-2.InstallieresiewiejedeandereAppundöffnesie.
-3.DasModelllädstduin[Schritt3](#schritt-3)direktinLMStudioüberdie**Suche**(Lupe).
+1. Öffne **[lmstudio.ai](https://lmstudio.ai)** und lade die Mac-Version.
+2. Installiere sie wie jede andere App und öffne sie.
+3. Das Modell lädst du in [Schritt 3](#schritt-3) direkt in LM Studio über die **Suche** (Lupe).
 
-**WichtigbeiLMStudio:**DieAdressefürNodistspäter`http://localhost:1234/v1`(nicht11434).
+**Wichtig bei LM Studio:** Die Adresse für Nod ist später `http://localhost:1234/v1` (nicht 11434).
 </details>
 
 <details>
-<summary><b>💡Wasisteigentlichdas„Terminal“?</b></summary>
-<br/>
+<summary><b>💡 Was ist eigentlich das „Terminal“?</b></summary>
+<br />
 
-DasTerminalisteinFenster,indasmanBefehletippt,stattzuklicken.KeineAngst:Dukannstdamitnichtskaputtmachen,solangedunurdieBefehleausdieserAnleitungbenutzt.
+Das Terminal ist ein Fenster, in das man Befehle tippt, statt zu klicken. Keine Angst: Du kannst damit nichts kaputt machen, solange du nur die Befehle aus dieser Anleitung benutzt.
 
--**Öffnen:**<kbd>⌘Cmd</kbd>+<kbd>Leertaste</kbd>,„Terminal“tippen,<kbd>Enter</kbd>.
--**Befehleinfügen:**<kbd>⌘Cmd</kbd>+<kbd>V</kbd>,dann<kbd>Enter</kbd>.
--**Etwasabbrechen:**<kbd>Ctrl</kbd>+<kbd>C</kbd>.
+- **Öffnen:** <kbd>⌘ Cmd</kbd> + <kbd>Leertaste</kbd>, „Terminal“ tippen, <kbd>Enter</kbd>.
+- **Befehl einfügen:** <kbd>⌘ Cmd</kbd> + <kbd>V</kbd>, dann <kbd>Enter</kbd>.
+- **Etwas abbrechen:** <kbd>Ctrl</kbd> + <kbd>C</kbd>.
 </details>
 
-<aid="schritt-3"></a>
-###Schritt3·DasGehirn(Modell)herunterladen⏱️10–20Min.
+<a id="schritt-3"></a>
+### Schritt 3 · Das Gehirn (Modell) herunterladen ⏱️ 10–20 Min.
 
-Ein**Modell**istdaseigentlicheGehirn.EsisteinesehrgroßeDatei(ca.17–24GB).Wirempfehlengenau**zwei**Modelle.MehrdazuimAbschnitt[WelchesModell?](#modelle).
+Ein **Modell** ist das eigentliche Gehirn. Es ist eine sehr große Datei (ca. 17–24 GB). Wir empfehlen genau **zwei** Modelle. Mehr dazu im Abschnitt [Welches Modell?](#modelle).
 
-**MitOllama:**TippeimTerminal:
+**Mit Ollama:** Tippe im Terminal:
 
 ```sh
-ollamapullqwen3.6:35b
+ollama pull qwen3.6:35b
 ```
 
-JetztläufteinBalken.DasdauerteineWeile.ZeitfüreinenKakao!☕
+Jetzt läuft ein Balken. Das dauert eine Weile. Zeit für einen Kakao! ☕
 
->DuwillstspäterauchdasProgrammier-Modell?Dannzusätzlich:`ollamapullqwen3.6:27b`
+> Du willst später auch das Programmier-Modell? Dann zusätzlich: `ollama pull qwen3.6:27b`
 
-**MitLMStudio:**Klickeaufdie**Lupe**🔍,suchenach**qwen3.6**,wähle**Qwen3.635BA3B**(aufdemMacdie**MLX**-Version)undklicke**Download**.
+**Mit LM Studio:** Klicke auf die **Lupe** 🔍, suche nach **qwen3.6 35b** und klicke **Download**. Auf dem Mac ist die **MLX**-Version meist am schnellsten, wenn es sie gibt.
 
-**Test(Ollama):**
+**Test (Ollama):**
 ```sh
-ollamalist
+ollama list
 ```
-Steht`qwen3.6:35b`inderListe?✅
+Steht `qwen3.6:35b` in der Liste? ✅
 
-<aid="schritt-4"></a>
-###Schritt4·DenNotizblockvergrößern⏱️1Min.
+<a id="schritt-4"></a>
+### Schritt 4 · Den Notizblock vergrößern ⏱️ 1 Min.
 
-**DieserSchrittistsuperwichtig!**Diemeistenvergessenihn,unddannwirktJarvis„dumm“.
+**Dieser Schritt ist super wichtig!** Die meisten vergessen ihn, und dann wirkt Jarvis „dumm“.
 
-DasGehirnhateinen**Notizblock**(aufEnglisch:*Contextlength*).Daraufschreibtesalles,wasessichgerademerkenmuss.NodgibtdemGehirneinelangeAnleitungmitallenWerkzeugen.Diealleinbrauchtschonca.20.000„Wörter“(Tokens).VieleProgrammestartenabermitnur4.000.DannpasstNodsAnleitunggarnichtdrauf!
+Das Gehirn hat einen **Notizblock** (auf Englisch: *Context length*). Darauf schreibt es alles, was es sich gerade merken muss. Nod gibt dem Gehirn eine lange Anleitung mit allen Werkzeugen. Die allein braucht schon ca. 20.000 „Wörter“ (Tokens). Viele Programme starten aber mit nur 4.000. Dann passt Nods Anleitung gar nicht drauf!
 
-<palign="center">
-<imgsrc="docs/bilder/kontext.png"alt="DerNotizblock:4kistzuklein,32kgehtknapp,64kbrauchstdu.Sostellstduesein:Ollama-Symbol,Settings,Contextlength,Reglerauf64k."width="100%"/>
+<p align="center">
+  <img src="docs/bilder/kontext.png" alt="Der Notizblock: 4k ist zu klein, 32k geht knapp, 64k brauchst du. So stellst du es ein: Ollama-Symbol, Settings, Context length, Regler auf 64k." width="100%" />
 </p>
 
-**MitOllama:**
-1.KlickeobeninderMenüleisteaufdas**Lama**🦙.
-2.Klickeauf**Settings**.
-3.Schiebe**Contextlength**auf**64k**(odermehr).
-4.BeendeOllamaeinmalundstarteesneu.
+**Mit Ollama:**
+1. Klicke oben in der Menüleiste auf das **Lama** 🦙.
+2. Klicke auf **Settings**.
+3. Schiebe **Context length** auf **64k** (oder mehr).
+4. Beende Ollama einmal und starte es neu.
 
-**MitLMStudio:**WenndudasModelllädst,stelle**ContextLength**auf**65536**(odermehr).
+**Mit LM Studio:** Wenn du das Modell lädst, stelle **Context Length** auf **65536** (oder mehr).
 
-**Test(Ollama):**StelledemModelleinekurzeFrage,damiteslädt,undschaudannnach:
+**Test (Ollama):** Stelle dem Modell eine kurze Frage, damit es lädt, und schau dann nach:
 ```sh
-ollamarunqwen3.6:35b"SagHallo"
-ollamaps
+ollama run qwen3.6:35b "Sag Hallo"
+ollama ps
 ```
-InderSpalte**CONTEXT**sollte**65536**stehen.✅
+In der Spalte **CONTEXT** sollte **65536** stehen. ✅
 
-<aid="schritt-5"></a>
-###Schritt5·Nodinstallieren⏱️5–10Min.
+<a id="schritt-5"></a>
+### Schritt 5 · Nod installieren ⏱️ 5–10 Min.
 
-1.LadeNodfürdeinenMac:**[NodfürApple-Chip(M1–M5)](https://github.com/n8n-io/nod/releases/latest/download/nod-arm64.dmg)**
-<sub>(ÄltererMacmitIntel?[Hier](https://github.com/n8n-io/nod/releases/latest/download/nod-x64.dmg).Windows11?[Hier](https://github.com/n8n-io/nod/releases/latest/download/nod-Setup-x64.exe).)</sub>
-2.ÖffnedieDateiundziehe**Nod**indenOrdner**Programme**.
-3.ÖffneNod.DerMacfragt:„Möchtestdudasöffnen?“→**Öffnen**.
-4.Klickeauf**Getstarted**.
-5.Nodlädtjetzteinmalseineneigenenkleinen„ComputerimComputer“herunter(ca.1,8GB).LassdasInternetanundwarte,bisesfertigist.
+1. Lade Nod für deinen Mac: **[Nod für Apple-Chip (M1–M5)](https://github.com/n8n-io/nod/releases/latest/download/nod-arm64.dmg)**
+   <sub>(Älterer Mac mit Intel? [Hier](https://github.com/n8n-io/nod/releases/latest/download/nod-x64.dmg). Windows 11? [Hier](https://github.com/n8n-io/nod/releases/latest/download/nod-Setup-x64.exe).)</sub>
+2. Öffne die Datei und ziehe **Nod** in den Ordner **Programme**.
+3. Öffne Nod. Der Mac fragt: „Möchtest du das öffnen?“ → **Öffnen**.
+4. Klicke auf **Get started**.
+5. Nod lädt jetzt einmal seinen eigenen kleinen „Computer im Computer“ herunter (ca. 1,8 GB). Lass das Internet an und warte, bis es fertig ist.
 
->🔐FragtderMacnachdeinem**Schlüsselbund-Passwort**?Dasistnormal.NodspeichertdamitdeinePasswörtersicher.
+> 🔐 Fragt der Mac nach deinem **Schlüsselbund-Passwort**? Das ist normal. Nod speichert damit deine Passwörter sicher.
 
-<aid="schritt-6"></a>
-###Schritt6·HändeundGehirnverbinden⏱️2Min.
+<a id="schritt-6"></a>
+### Schritt 6 · Hände und Gehirn verbinden ⏱️ 2 Min.
 
-JetztsagstduNod,wodasGehirnwohnt.
+Jetzt sagst du Nod, wo das Gehirn wohnt.
 
-1.WennNodnacheinemModellfragt:Klickeauf**Moreproviders**unddannauf**Yourownserver**.
-<sub>(Späterfindestdudasunter**Settings→Models→Add→OpenAI-compatible**.)</sub>
-2.Bei**Serveraddress**stehtschon`http://localhost:11434/v1`.DasistOllama.✅
-<sub>(BeiLMStudioänderstdueszu`http://localhost:1234/v1`.)</sub>
-3.**APIkey**:leerlassen.
-4.Klickeauf**Connect**.
+1. Wenn Nod nach einem Modell fragt: Klicke auf **More providers** und dann auf **Your own server**.
+   <sub>(Später findest du das unter **Settings → Models → Add → OpenAI-compatible**.)</sub>
+2. Bei **Server address** steht schon `http://localhost:11434/v1`. Das ist Ollama. ✅
+   <sub>(Bei LM Studio änderst du es zu `http://localhost:1234/v1`.)</sub>
+3. **API key**: leer lassen.
+4. Klicke auf **Connect**.
 
-<palign="center">
-<imgsrc="docs/bilder/nod-eigener-server.png"alt="EchterScreenshotausNod:Seite'Yourownserver'mitderServer-Adressehttp://localhost:11434/v1,einemleerenFeldfürdenAPI-KeyunddemKnopfConnect."width="80%"/>
-<br/><sub>EchterScreenshotausNod(©n8nGmbH,Apache2.0)</sub>
+<p align="center">
+  <img src="docs/bilder/nod-eigener-server.png" alt="Echter Screenshot aus Nod: Seite 'Your own server' mit der Server-Adresse http://localhost:11434/v1, einem leeren Feld für den API-Key und dem Knopf Connect." width="80%" />
+  <br /><sub>Echter Screenshot aus Nod (© n8n GmbH, Apache 2.0)</sub>
 </p>
 
-5.WähledeinModellaus:**qwen3.6:35b**.
+5. Wähle dein Modell aus: **qwen3.6:35b**.
 
-Wennallesklappt,siehstduunter**Settings→Models**soetwas:
+Wenn alles klappt, siehst du unter **Settings → Models** so etwas:
 
-<palign="center">
-<imgsrc="docs/bilder/nod-verbunden.png"alt="EchterScreenshotausNod:UnterOpenAI-compatiblestehtlocalhost:11434mitdemHinweisSelected."width="80%"/>
-<br/><sub>EchterScreenshotausNod(©n8nGmbH,Apache2.0)</sub>
+<p align="center">
+  <img src="docs/bilder/nod-verbunden.png" alt="Echter Screenshot aus Nod: Unter OpenAI-compatible steht localhost:11434 mit dem Hinweis Selected." width="80%" />
+  <br /><sub>Echter Screenshot aus Nod (© n8n GmbH, Apache 2.0)</sub>
 </p>
 
-🎉**Geschafft!DeinJarvislebt.**
+🎉 **Geschafft! Dein Jarvis lebt.**
 
 ---
 
-<aid="erste-aufgaben"></a>
-##🚀Probieresaus:DeineerstenAufgaben
+<a id="erste-aufgaben"></a>
+## 🚀 Probier es aus: Deine ersten Aufgaben
 
-SchreibJarviseinfach,wasduwillst.Ganznormal,wieeinerPerson.HiereinpaarIdeen:
+Schreib Jarvis einfach, was du willst. Ganz normal, wie einer Person. Hier ein paar Ideen:
 
-|Wasduschreibst|WasJarvisdafürbenutzt|
+| Was du schreibst | Was Jarvis dafür benutzt |
 |---|---|
-|„WassindheutediewichtigstenNachrichtenzuKI?Fassesiein5Punktenzusammen.“|🔎Websuche,🌐Webseitenlesen|
-|„VergleichediedreibestenKaffeemaschinenunter300€undmacheineTabelle.“|🔎Websuche,✍️Schreiben|
-|„SchreibeinefreundlicheE-MailanmeinenVermieterwegenderkaputtenHeizung.“|✍️Schreiben|
-|„ErinneremichjedenMontagum9UhranmeineWochenplanung.“|⏰Zeitpläne|
-|„BaumireinekleineWebseitefürmeinenHundesitter-Service.“|💻Code(nimmdafürModell2)|
+| „Was sind heute die wichtigsten Nachrichten zu KI? Fasse sie in 5 Punkten zusammen.“ | 🔎 Websuche, 🌐 Webseiten lesen |
+| „Vergleiche die drei besten Kaffeemaschinen unter 300 € und mach eine Tabelle.“ | 🔎 Websuche, ✍️ Schreiben |
+| „Schreib eine freundliche E-Mail an meinen Vermieter wegen der kaputten Heizung.“ | ✍️ Schreiben |
+| „Erinnere mich jeden Montag um 9 Uhr an meine Wochenplanung.“ | ⏰ Zeitpläne |
+| „Bau mir eine kleine Webseite für meinen Hundesitter-Service.“ | 💻 Code (nimm dafür Modell 2) |
 
->🐢**DieersteAntwortdauertlänger.**DasGehirnmusserst„aufwachen“undNodslangeAnleitunglesen.Danachgehtesschneller.
+> 🐢 **Die erste Antwort dauert länger.** Das Gehirn muss erst „aufwachen“ und Nods lange Anleitung lesen. Danach geht es schneller.
 
 ---
 
-<aid="modelle"></a>
-##🧠WelchesModellsollichnehmen?
+<a id="modelle"></a>
+## 🧠 Welches Modell soll ich nehmen?
 
-EsgibttausendeModelle.Wirmachenesdirleicht:**Nimmeinsvondiesenzwei.**Beidesindkostenlos,beidekönnenWerkzeugebenutzen,beidelaufengutaufeinemMacmit48–64GB.
+Es gibt tausende Modelle. Wir machen es dir leicht: **Nimm eins von diesen zwei.** Beide sind kostenlos, beide können Werkzeuge benutzen, beide laufen gut auf einem Mac mit 48–64 GB.
 
-<palign="center">
-<imgsrc="docs/bilder/modelle.png"alt="ZweiModelle:Modell1qwen3.6:35b,derschnelleAllrounderfürRecherche,WebsucheundSchreiben.Modell2qwen3.6:27b,dergründlicheBauerfürProgrammierenundApps."width="100%"/>
+<p align="center">
+  <img src="docs/bilder/modelle.png" alt="Zwei Modelle: Modell 1 qwen3.6:35b, der schnelle Allrounder für Recherche, Websuche und Schreiben. Modell 2 qwen3.6:27b, der gründliche Bauer für Programmieren und Apps." width="100%" />
 </p>
 
-###⚡Modell1:DerschnelleAllrounder·`qwen3.6:35b`
+### ⚡ Modell 1: Der schnelle Allrounder · `qwen3.6:35b`
 
-**NimmdiesesModellzuerst.**
+**Nimm dieses Modell zuerst.**
 
--**Warumschnell?**Esisteinsogenanntes**MoE-Modell**(„MixtureofExperts“).StelldireineFirmamit35MilliardenMitarbeiternvor.BeijederFragearbeitenabernurdie3Milliarden,diesichdamitambestenauskennen.Darumantwortetesflott.
--**Superfür:**Fragenbeantworten,imInternetrecherchieren,TexteundE-Mailsschreiben,Zusammenfassungen,Alltags-Aufgaben.
--**Download:**ca.24GB·**RAM:**ab48GBempfohlen
--**Laden:**`ollamapullqwen3.6:35b`
+- **Warum schnell?** Es ist ein sogenanntes **MoE-Modell** („Mixture of Experts“). Stell dir eine Firma mit 35 Milliarden Mitarbeitern vor. Bei jeder Frage arbeiten aber nur die 3 Milliarden, die sich damit am besten auskennen. Darum antwortet es flott.
+- **Super für:** Fragen beantworten, im Internet recherchieren, Texte und E-Mails schreiben, Zusammenfassungen, Alltags-Aufgaben.
+- **Download:** ca. 24 GB · **RAM:** ab 48 GB empfohlen
+- **Laden:** `ollama pull qwen3.6:35b`
 
-###🛠️Modell2:DergründlicheBauer·`qwen3.6:27b`
+### 🛠️ Modell 2: Der gründliche Bauer · `qwen3.6:27b`
 
-**HoldirdiesesModell,wennduetwasbauenwillst.**
+**Hol dir dieses Modell, wenn du etwas bauen willst.**
 
--**Warumgründlich?**Esistein**Dense-Modell**.HierarbeitenbeijederFragealle27Milliarden„Mitarbeiter“mit.Dasistlangsamer,abersehrsorgfältig.BeimProgrammierengehörteszudenstärkstenModellen,dieaufeinenHeim-Computerpassen.
--**Superfür:**AppsundWebseitenbauen,Codeverstehenundreparieren,langeAufgabenmitvielenSchritten.
--**Download:**ca.17GB·**RAM:**ab32GB,besser48GB
--**Laden:**`ollamapullqwen3.6:27b`
+- **Warum gründlich?** Es ist ein **Dense-Modell**. Hier arbeiten bei jeder Frage alle 27 Milliarden „Mitarbeiter“ mit. Das ist langsamer, aber sehr sorgfältig. Beim Programmieren gehört es zu den stärksten Modellen, die auf einen Heim-Computer passen.
+- **Super für:** Apps und Webseiten bauen, Code verstehen und reparieren, lange Aufgaben mit vielen Schritten.
+- **Download:** ca. 17 GB · **RAM:** ab 32 GB, besser 48 GB
+- **Laden:** `ollama pull qwen3.6:27b`
 
->🔁**Wechseln:**InNodunter**Settings→Models**kannstdujederzeitdasandereModellauswählen.Mit64GBkannstdubeideinstallierthaben.Mit48GBnimmambestenimmernureinszurZeit.
+> 🔁 **Wechseln:** In Nod unter **Settings → Models** kannst du jederzeit das andere Modell auswählen. Mit 64 GB kannst du beide installiert haben. Mit 48 GB nimm am besten immer nur eins zur Zeit.
 
 <details>
-<summary><b>WarumkeineanderenModelle?</b></summary>
-<br/>
+<summary><b>Warum keine anderen Modelle?</b></summary>
+<br />
 
--**GrößereModelle**(z.B.65Milliarden„Teile“undmehr)passenkaumauf64GB,weilNodunddeinMacauchnochPlatzbrauchen.
--**KleinereModelle**sindschneller,machenabermehrFehler.DasistbeiNodwichtig:DasModellentscheidetauchmit,**wannNoddichvorherfragenmuss**.KleineModelleliegendaöfterfalsch.
--**Wichtigist„Tools“:**EinModellohneWerkzeug-FähigkeitkanninNodnurplaudern.Auf[ollama.com](https://ollama.com/search?c=tools)erkennstduguteModelleamEtikett**tools**.
--DieModell-Weltändertsichschnell.DieseEmpfehlungistvom**November2026**.
+- **Größere Modelle** (z. B. 65 Milliarden „Teile“ und mehr) passen kaum auf 64 GB, weil Nod und dein Mac auch noch Platz brauchen.
+- **Kleinere Modelle** sind schneller, machen aber mehr Fehler. Das ist bei Nod wichtig: Das Modell entscheidet auch mit, **wann Nod dich vorher fragen muss**. Kleine Modelle liegen da öfter falsch.
+- **Wichtig ist „Tools“:** Ein Modell ohne Werkzeug-Fähigkeit kann in Nod nur plaudern. Auf [ollama.com](https://ollama.com/search?c=tools) erkennst du gute Modelle am Etikett **tools**.
+- Die Modell-Welt ändert sich schnell. Diese Empfehlung ist vom **November 2026**.
 </details>
 
-###🔎WarumistWebsuchesowichtig?
+### 🔎 Warum ist Websuche so wichtig?
 
-EinModellhatirgendwannaufgehörtzulernen.Alles,wasdanachpassiertist,**weißesnicht**.EsistwieeinsehrklugerFreund,dereinJahraufeinereinsamenInselwar.
+Ein Modell hat irgendwann aufgehört zu lernen. Alles, was danach passiert ist, **weiß es nicht**. Es ist wie ein sehr kluger Freund, der ein Jahr auf einer einsamen Insel war.
 
-Mit**Websuche**kannJarvisnachschauen:
--📰**NeueFakten:**Nachrichten,Preise,Wetter,Öffnungszeiten.
--📚**Recherche:**MehrereQuellenlesen,vergleichenundzusammenfassen.
--✅**WenigerErfinden:**Stattzuraten,liestJarvisnachundnenntdieQuelle.
+Mit **Websuche** kann Jarvis nachschauen:
+- 📰 **Neue Fakten:** Nachrichten, Preise, Wetter, Öffnungszeiten.
+- 📚 **Recherche:** Mehrere Quellen lesen, vergleichen und zusammenfassen.
+- ✅ **Weniger Erfinden:** Statt zu raten, liest Jarvis nach und nennt die Quelle.
 
-NodhatWebsucheschoneingebaut.Dumusstnichtsextraeinrichten.
+Nod hat Websuche schon eingebaut. Du musst nichts extra einrichten.
 
-###🧰Wasist„ToolCalling“?
+### 🧰 Was ist „Tool Calling“?
 
-**ToolCalling**heißt:DasGehirnkann**Werkzeugebenutzen**.EskannselbstnichtklickenoderinsInternetgehen.AbereskannNodsagen:„BittebenutzejetztdieWebsuchemitdiesenWörtern.“NodmachtdasundgibtdasErgebniszurück.
+**Tool Calling** heißt: Das Gehirn kann **Werkzeuge benutzen**. Es kann selbst nicht klicken oder ins Internet gehen. Aber es kann Nod sagen: „Bitte benutze jetzt die Websuche mit diesen Wörtern.“ Nod macht das und gibt das Ergebnis zurück.
 
-<palign="center">
-<imgsrc="docs/bilder/tool-calling.png"alt="ToolCallingin4Schritten:DufragstnachdemWetter.DasGehirnmerkt,dassesdieWebsuchebraucht.NodsuchtimInternet.JarvisantwortetmitdemErgebnis."width="100%"/>
+<p align="center">
+  <img src="docs/bilder/tool-calling.png" alt="Tool Calling in 4 Schritten: Du fragst nach dem Wetter. Das Gehirn merkt, dass es die Websuche braucht. Nod sucht im Internet. Jarvis antwortet mit dem Ergebnis." width="100%" />
 </p>
 
-DafüristToolCallinggut:
--🔎**Recherche:**suchen,Webseitenlesen,Faktenprüfen.
--💻**Programmieren:**Codeschreiben,ausführen,Fehlerfinden,Dateienspeichern.
--📧**Erledigungen:**E-Mailsentwerfen,Termineeintragen,Erinnerungensetzen.
+Dafür ist Tool Calling gut:
+- 🔎 **Recherche:** suchen, Webseiten lesen, Fakten prüfen.
+- 💻 **Programmieren:** Code schreiben, ausführen, Fehler finden, Dateien speichern.
+- 📧 **Erledigungen:** E-Mails entwerfen, Termine eintragen, Erinnerungen setzen.
 
-**KeineSorge:**BevorNodetwasWichtigesfürdichtut(z.B.eineE-Mailabschicken),**fragtesdichvorher**.Darumheißtes„Nod“,wieeinNicken:EswartetaufdeinOkay.
+**Keine Sorge:** Bevor Nod etwas Wichtiges für dich tut (z. B. eine E-Mail abschicken), **fragt es dich vorher**. Darum heißt es „Nod“, wie ein Nicken: Es wartet auf dein Okay.
 
 ---
 
-<aid="hilfe"></a>
-##🆘Hilfe!Etwasklapptnicht
+<a id="hilfe"></a>
+## 🆘 Hilfe! Etwas klappt nicht
 
-|Problem|Lösung|
+| Problem | Lösung |
 |---|---|
-|Nodsagt**„ThisserverhasnomodelsNodcanuse“**|DeinModellkannkeineWerkzeuge.Ladeeinsder[zweiempfohlenenModelle](#modelle).|
-|Nodsagt**„Modeldiscoveryfailed“**|LäuftOllama?SchaunachdemLama🦙obeninderMenüleiste.TestimTerminal:`curlhttp://localhost:11434/v1/models`|
-|Jarvis**vergisstseineWerkzeuge**,wiederholtsichoderignoriertdich|DerNotizblockistzuklein.Mach[Schritt4](#schritt-4)nochmalundstarteOllamaneu.|
-|Die**ersteAntwortdauertewig**|Dasistnormal(biszu1–2Minuten).NacheinerMinutezeigtNod„Waitingfor…“.Einfachwarten.|
-|DerMacwird**sehrlangsam**|ZuwenigRAMfrei.SchließegroßeProgramme(z.B.Spiele,vieleBrowser-Tabs)odernimmModell2(kleiner).|
-|Ein**neuesModell**erscheintnichtinNod|Settings→Models→**Manage**neben„OpenAI-compatible“→dieselbeAdressenochmalhinzufügen.DaslädtdieListeneu.|
-|Nod**fragtvorfastallem**nach|KleineModellesindbeidieserEntscheidungunsicher.Nimm`qwen3.6:35b`oder`qwen3.6:27b`.|
-|**Ichweißnicht,wasfehlt**|LassdenPrüf-Befehllaufen.Erändertnichtsundzeigtdirrot,wasfehlt:<br/>`curl-fsSLhttps://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-mac.sh\|bash-s----check`|
+| Nod sagt **„This server has no models Nod can use“** | Dein Modell kann keine Werkzeuge. Lade eins der [zwei empfohlenen Modelle](#modelle). |
+| Nod sagt **„Model discovery failed“** | Läuft Ollama? Schau nach dem Lama 🦙 oben in der Menüleiste. Test im Terminal: `curl http://localhost:11434/v1/models` |
+| Jarvis **vergisst seine Werkzeuge**, wiederholt sich oder ignoriert dich | Der Notizblock ist zu klein. Mach [Schritt 4](#schritt-4) nochmal und starte Ollama neu. |
+| Die **erste Antwort dauert ewig** | Das ist normal (bis zu 1–2 Minuten). Nach einer Minute zeigt Nod „Waiting for …“. Einfach warten. |
+| Der Mac wird **sehr langsam** | Zu wenig RAM frei. Schließe große Programme (z. B. Spiele, viele Browser-Tabs) oder nimm Modell 2 (kleiner). |
+| Ein **neues Modell** erscheint nicht in Nod | Settings → Models → **Manage** neben „OpenAI-compatible“ → dieselbe Adresse nochmal hinzufügen. Das lädt die Liste neu. |
+| Nod **fragt vor fast allem** nach | Kleine Modelle sind bei dieser Entscheidung unsicher. Nimm `qwen3.6:35b` oder `qwen3.6:27b`. |
+| **Ich weiß nicht, was fehlt** | Lass den Prüf-Befehl laufen. Er ändert nichts und zeigt dir rot, was fehlt: <br />`curl -fsSL https://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-mac.sh \| bash -s -- --check` |
 
-NochmehrHilfe:[Nod-DokuzulokalenModellen(Englisch)](https://nod.n8n.io/docs/connect/local-models/)·[NodDiscord](https://discord.gg/n8n)
+Noch mehr Hilfe: [Nod-Doku zu lokalen Modellen (Englisch)](https://nod.n8n.io/docs/connect/local-models/) · [Nod Discord](https://discord.gg/n8n)
 
 ---
 
-<aid="profis"></a>
-##🧑‍💻SchnellstartfürProfis
+<a id="profis"></a>
+## 🧑‍💻 Schnellstart für Profis
 
-DukennstTerminal,Homebrewund`.env`-Dateien?HieristallesinKurzform.
-
-```sh
-#1)Ollama+Modell
-brewinstall--caskollama
-launchctlsetenvOLLAMA_CONTEXT_LENGTH65536#oderinderOllama-App:Settings→Contextlength
-open-aOllama
-ollamapullqwen3.6:35b#Allrounder(MoE,3Baktiv,~24GB)
-ollamapullqwen3.6:27b#Coding(dense,~17GB),optional
-
-#Prüfen:Tool-Fähigkeit+geladenerKontext
-curl-slocalhost:11434/api/show-d'{"model":"qwen3.6:35b"}'|grep-o'"capabilities":[^]]*]'
-ollamarunqwen3.6:35b"hi">/dev/null&&ollamaps
-
-#2)NodDesktop(offiziellerInstallervonn8n)
-curl-fsSLhttps://raw.githubusercontent.com/n8n-io/nod/main/deployment/n8n/install.sh|sh
-
-#3)InNod:Moreproviders→Yourownserver→http://localhost:11434/v1
-```
-
-**NodausdemQuellcode**(brauchtNode.js24.21+,pnpm,Docker):
+Du kennst Terminal, Homebrew und `.env`-Dateien? Hier ist alles in Kurzform.
 
 ```sh
-gitclonehttps://github.com/n8n-io/nod.git&&cdnod
-corepackenable
-pnpmstart#erzeugt.envaus.env.example
+# 1) Ollama + Modell
+brew install --cask ollama
+launchctl setenv OLLAMA_CONTEXT_LENGTH 65536   # oder in der Ollama-App: Settings → Context length
+open -a Ollama
+ollama pull qwen3.6:35b        # Allrounder (MoE, 3B aktiv, ~24 GB)
+ollama pull qwen3.6:27b        # Coding (dense, ~17 GB), optional
+
+# Prüfen: Tool-Fähigkeit + geladener Kontext
+curl -s localhost:11434/api/show -d '{"model":"qwen3.6:35b"}' | grep -o '"capabilities":[^]]*]'
+ollama run qwen3.6:35b "hi" >/dev/null && ollama ps
+
+# 2) Nod Desktop (offizieller Installer von n8n)
+curl -fsSL https://raw.githubusercontent.com/n8n-io/nod/main/deployment/n8n/install.sh | sh
+
+# 3) In Nod: More providers → Your own server → http://localhost:11434/v1
 ```
 
-Dannin`nod/.env`:
+**Nod aus dem Quellcode** (braucht Node.js 24.21+, pnpm, Docker):
+
+```sh
+git clone https://github.com/n8n-io/nod.git && cd nod
+corepack enable
+pnpm start            # erzeugt .env aus .env.example
+```
+
+Dann in `nod/.env`:
 
 ```sh
 LLM_PROVIDER=compatible
-OPENAI_COMPATIBLE_BASE_URL=http://localhost:11434/v1#LMStudio:http://localhost:1234/v1
+OPENAI_COMPATIBLE_BASE_URL=http://localhost:11434/v1   # LM Studio: http://localhost:1234/v1
 OPENAI_COMPATIBLE_API_KEY=
 LLM_MODEL=qwen3.6:35b
-#NOD_TRUST_MODEL=selected#Standard:deinModellprüftAktionenselbst(niedrigsteReasoning-Stufe)
+# NOD_TRUST_MODEL=selected  # Standard: dein Modell prüft Aktionen selbst (niedrigste Reasoning-Stufe)
 ```
 
-**Gutzuwissen:**
--Nodbraucht**ToolCalling**und**≥64kKontext**(System-Prompt+Tools≈20kTokens).
--Miteinem`localhost`-ModellkostetChatnichts.Der**Trust-Check**nutztstandardmäßigdeingewähltesModell.Mit`NOD_TRUST_MODEL=llm`oder`decision`kanneinexternerkleinerCheckergenutztwerden(kannAPI-Kostenhaben).Details:[Decisionchecks](https://nod.n8n.io/docs/connect/models/#decision-checks).
--WebsucheläuftüberNodseingebautesWeb-Plugin(Standard:Exa,ohneAPI-KeyüberExasöffentlichenDienst).DieSuchanfrageselbstgehtalsoinsInternet.
--vLLM:`--enable-auto-tool-choice--tool-call-parser<parser>--max-model-len65536`;llama.cpp:`llama-server-c65536--jinja`.
+**Gut zu wissen:**
+- Nod braucht **Tool Calling** und **≥ 64k Kontext** (System-Prompt + Tools ≈ 20k Tokens).
+- Mit einem `localhost`-Modell kostet Chat nichts. Der **Trust-Check** nutzt standardmäßig dein gewähltes Modell. Mit `NOD_TRUST_MODEL=llm` oder `decision` kann ein externer kleiner Checker genutzt werden (kann API-Kosten haben). Details: [Decision checks](https://nod.n8n.io/docs/connect/models/#decision-checks).
+- Websuche läuft über Nods eingebautes Web-Plugin (Standard: Exa, ohne API-Key über Exas öffentlichen Dienst). Die Suchanfrage selbst geht also ins Internet.
+- vLLM: `--enable-auto-tool-choice --tool-call-parser <parser> --max-model-len 65536`; llama.cpp: `llama-server -c 65536 --jinja`.
 
 ---
 
-##🔒Wasbleibtprivat?
+## 🔒 Was bleibt privat?
 
--**DeineGesprächemitdemGehirn**bleibenaufdeinemComputer(beiOllama/LMStudio).
--**Websuche**schicktdieSuchwörteraneinenSuchdienst.Webseiten,dieJarvisliest,sehendenBesuch.
--**VerbundeneApps**(Gmail,Kalender…)laufenübereinenVerbindungsdienstvonn8n.
--**Nutzungsdaten:**NodschicktstandardmäßigeinfacheNutzungsdatenann8n.Ausschalten:**Settings→Privacy&data→Shareusagedata**.
+- **Deine Gespräche mit dem Gehirn** bleiben auf deinem Computer (bei Ollama/LM Studio).
+- **Websuche** schickt die Suchwörter an einen Suchdienst. Webseiten, die Jarvis liest, sehen den Besuch.
+- **Verbundene Apps** (Gmail, Kalender …) laufen über einen Verbindungsdienst von n8n.
+- **Nutzungsdaten:** Nod schickt standardmäßig einfache Nutzungsdaten an n8n. Ausschalten: **Settings → Privacy & data → Share usage data**.
 
-Genaunachlesen:[Nod:Yourdataandprivacy](https://nod.n8n.io/docs/trust/privacy/)
-
----
-
-##💻KeinstarkerComputer?
-
--**24–32GBRAM:**Nimm`gpt-oss:20b`(`ollamapullgpt-oss:20b`).Dasklappt,machtabermehrFehler.
--**WenigerRAM:**EinlokalesGehirnwirdzulangsam.Nodkannstattdessenein**Online-Modell**nutzen(z.B.miteinemChatGPT-AboodereinemAPI-Schlüssel).DaskostetGeldundistnichtmehrganzprivat.Anleitung:[Nod:Models](https://nod.n8n.io/docs/connect/models/).
+Genau nachlesen: [Nod: Your data and privacy](https://nod.n8n.io/docs/trust/privacy/)
 
 ---
 
-##📖KleinesWörterbuch
+## 💻 Kein starker Computer?
 
-|Wort|Einfacherklärt|
+- **24–32 GB RAM:** Nimm `gpt-oss:20b` (`ollama pull gpt-oss:20b`). Das klappt, macht aber mehr Fehler.
+- **Weniger RAM:** Ein lokales Gehirn wird zu langsam. Nod kann stattdessen ein **Online-Modell** nutzen (z. B. mit einem ChatGPT-Abo oder einem API-Schlüssel). Das kostet Geld und ist nicht mehr ganz privat. Anleitung: [Nod: Models](https://nod.n8n.io/docs/connect/models/).
+
+---
+
+## 📖 Kleines Wörterbuch
+
+| Wort | Einfach erklärt |
 |---|---|
-|**KI-Modell/LLM**|Das„Gehirn“.EinegroßeDatei,diegelernthat,Sprachezuverstehenundzuschreiben.|
-|**Lokal**|AufdeinemeigenenComputer,nichtimInternet.|
-|**RAM/Arbeitsspeicher**|DerPlatz,andemderComputergeradedenkt.Jemehr,destogrößerdarfdasGehirnsein.|
-|**Ollama/LMStudio**|Programme,dieeinGehirnaufdeinemComputerlaufenlassen.|
-|**Nod**|DieAppmitdenWerkzeugen.SiefragtdasGehirn,waszutunist,undtutesdann.|
-|**ToolCalling**|DasGehirnkannWerkzeugebenutzen(suchen,Dateienöffnen,Codeausführen…).|
-|**Kontext/Contextlength**|DerNotizblockdesGehirns.SovielTextkannessichaufeinmalmerken.|
-|**Token**|EinStückchenText,ungefähreinWortteil.1.000Tokens≈750Wörter.|
-|**MoE(MixtureofExperts)**|EinGehirn,beidemproFragenurdiepassenden„Experten“arbeiten.Schnell!|
-|**Dense**|EinGehirn,beidemimmeralleTeilemitarbeiten.Gründlich,aberlangsamer.|
-|**Terminal**|EinFenster,indasmanBefehletipptstattzuklicken.|
-|**localhost**|„DieserComputerhier.“`localhost:11434`heißt:OllamaaufdeinemComputer.|
-|**Repo**|EinProjekt-OrdneraufGitHub.Wiedieserhier.|
+| **KI-Modell / LLM** | Das „Gehirn“. Eine große Datei, die gelernt hat, Sprache zu verstehen und zu schreiben. |
+| **Lokal** | Auf deinem eigenen Computer, nicht im Internet. |
+| **RAM / Arbeitsspeicher** | Der Platz, an dem der Computer gerade denkt. Je mehr, desto größer darf das Gehirn sein. |
+| **Ollama / LM Studio** | Programme, die ein Gehirn auf deinem Computer laufen lassen. |
+| **Nod** | Die App mit den Werkzeugen. Sie fragt das Gehirn, was zu tun ist, und tut es dann. |
+| **Tool Calling** | Das Gehirn kann Werkzeuge benutzen (suchen, Dateien öffnen, Code ausführen …). |
+| **Kontext / Context length** | Der Notizblock des Gehirns. So viel Text kann es sich auf einmal merken. |
+| **Token** | Ein Stückchen Text, ungefähr ein Wortteil. 1.000 Tokens ≈ 750 Wörter. |
+| **MoE (Mixture of Experts)** | Ein Gehirn, bei dem pro Frage nur die passenden „Experten“ arbeiten. Schnell! |
+| **Dense** | Ein Gehirn, bei dem immer alle Teile mitarbeiten. Gründlich, aber langsamer. |
+| **Terminal** | Ein Fenster, in das man Befehle tippt statt zu klicken. |
+| **localhost** | „Dieser Computer hier.“ `localhost:11434` heißt: Ollama auf deinem Computer. |
+| **Repo** | Ein Projekt-Ordner auf GitHub. Wie dieser hier. |
 
 ---
 
-##🤔WarumNodundnichtOpenJarvis?
+## 🤔 Warum Nod und nicht OpenJarvis?
 
-[OpenJarvis](https://github.com/open-jarvis/OpenJarvis)(Stanford)istaucheintoller,lokalerJarvis.ErläuftebenfallsmitOllama,LMStudio,MLXundanderenlokalenGehirnen.EristabereherfürEntwicklerundForschergedacht(Python,Kommandozeile,vieleEinstellungen).
+[OpenJarvis](https://github.com/open-jarvis/OpenJarvis) (Stanford) ist auch ein toller, lokaler Jarvis. Er läuft ebenfalls mit Ollama, LM Studio, MLX und anderen lokalen Gehirnen. Er ist aber eher für Entwickler und Forscher gedacht (Python, Kommandozeile, viele Einstellungen).
 
-**Nod**hateinefertigeAppmitKnöpfen,fragtvorwichtigenAktionennachundlässtsichohneProgrammiereneinrichten.DarumnutzenwirhierNod.
+**Nod** hat eine fertige App mit Knöpfen, fragt vor wichtigen Aktionen nach und lässt sich ohne Programmieren einrichten. Darum nutzen wir hier Nod.
 
 ---
 
-##📁WasistindiesemRepo?
+## 📁 Was ist in diesem Repo?
 
 ```
 jarvis-on-nod/
-├──README.md←dieseAnleitung
-├──scripts/
-│├──jarvis-mac.sh←Helfer-BefehlfürdenMac(einrichten+prüfen)
-│└──jarvis-windows.ps1←Helfer-BefehlfürWindows11
-├──docs/
-│├──bilder/←alleBilderdieserAnleitung
-│└──quellen/←QuelldateienderBilder(HTML),zumÄndern
-└──NOTICE←HinweisezufremdenInhalten(Nod-Screenshots)
+├── README.md                 ← diese Anleitung
+├── scripts/
+│   ├── jarvis-mac.sh         ← Helfer-Befehl für den Mac (einrichten + prüfen)
+│   └── jarvis-windows.ps1    ← Helfer-Befehl für Windows 11
+├── docs/
+│   ├── bilder/               ← alle Bilder dieser Anleitung
+│   └── quellen/              ← Quelldateien der Bilder (HTML), zum Ändern
+└── NOTICE                    ← Hinweise zu fremden Inhalten (Nod-Screenshots)
 ```
 
 <details>
-<summary>Bilderneuerzeugen(fürMitmacher)</summary>
-<br/>
+<summary>Bilder neu erzeugen (für Mitmacher)</summary>
+<br />
 
-DieGrafikenentstehenaus[`docs/quellen/bilder.html`](docs/quellen/bilder.html).ÄnderedenTextdortunderzeugedieBilderneu(brauchtNode.jsundPlaywright):
+Die Grafiken entstehen aus [`docs/quellen/bilder.html`](docs/quellen/bilder.html). Ändere den Text dort und erzeuge die Bilder neu (braucht Node.js und Playwright):
 
 ```sh
-nodedocs/quellen/render.jsdocs/bilder
+node docs/quellen/render.js docs/bilder
 ```
 </details>
 
 ---
 
-<palign="center">
-<sub>
-NodisteinProjektvon<ahref="https://n8n.io">n8n</a>(<ahref="https://github.com/n8n-io/nod">github.com/n8n-io/nod</a>,Apache2.0).<br/>
-DieseAnleitungisteinunabhängigesCommunity-Projektundnichtvonn8n.<br/>
-StandderAnleitung:November2026.
-</sub>
+<p align="center">
+  <sub>
+    Nod ist ein Projekt von <a href="https://n8n.io">n8n</a> (<a href="https://github.com/n8n-io/nod">github.com/n8n-io/nod</a>, Apache 2.0).<br />
+    Diese Anleitung ist ein unabhängiges Community-Projekt und nicht von n8n.<br />
+    Stand der Anleitung: November 2026.
+  </sub>
 </p>
