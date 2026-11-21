@@ -1,0 +1,14 @@
+Jarvis on Nod
+Eine Community-Anleitung für Nod mit lokalen KI-Modellen.
+
+Dieses Repo enthält Screenshots aus der Dokumentation von Nod:
+  docs/bilder/nod-eigener-server.png
+  docs/bilder/nod-verbunden.png
+Quelle: https://github.com/n8n-io/nod (docs/src/assets/screens/)
+Copyright 2026 n8n GmbH, lizenziert unter der Apache License 2.0
+(https://www.apache.org/licenses/LICENSE-2.0).
+
+"Nod" und "n8n" sind Namen der n8n GmbH. Dieses Projekt ist unabhängig
+und wird nicht von n8n betrieben oder unterstützt.
+
+Die Ollama- und LM-Studio-Namen gehören ihren jeweiligen Inhabern.
