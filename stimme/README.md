@@ -62,6 +62,27 @@ So siehst du genau, welcher Teil am meisten Zeit braucht.
 
 ---
 
+## 🪟 Mit Fenster (neu in 0.3)
+
+<p align="center"><img src="docs/fenster.png" alt="Jarvis-Fenster: leuchtende Kugel, Gespräch als Sprechblasen, Eingabefeld mit Mikro-, Bild- und Stopp-Knopf" width="360"></p>
+
+```sh
+./scripts/jarvis-stimme.sh --gui
+```
+
+Oder im Finder einfach **`scripts/Jarvis-Fenster.command` doppelklicken**.
+
+Es öffnet sich ein Fenster mit:
+- einer **leuchtenden Kugel**: blau = bereit, grün = hört zu (bewegt sich mit deiner Stimme), lila = denkt, türkis = spricht,
+- dem **Gespräch als Sprechblasen**, live Wort für Wort,
+- einem **Eingabefeld** zum Tippen (Enter = senden),
+- 🎙️ **Mikro an/aus** (Taste M), ⏹ **Stopp** (Esc),
+- 📎 **Bilder**: reinziehen, mit ⌘V einfügen oder über die Büroklammer auswählen.
+
+Das Fenster läuft in deinem Browser, aber nur auf deinem Computer (`http://127.0.0.1:8765`). Mikrofon und Lautsprecher bleiben bei Python, darum ist es genauso schnell wie im Terminal. Andere Webseiten dürfen nicht mit Jarvis reden.
+
+---
+
 ## ✨ Neu in Version 0.2: natürlicher, schlauer, aufmerksamer
 
 ### 👋 Ein eigener Name
@@ -155,6 +176,8 @@ Mit `--test` misst Jarvis alles einmal durch und zeigt dir die Zeiten. Probier r
 | `--geraete` | Mikrofone und Lautsprecher anzeigen |
 | `--mikro 2` / `--lautsprecher 3` | Bestimmtes Gerät nehmen |
 | `--stimme PFAD` | Andere Piper-Stimme (`.onnx`-Datei) |
+| `--gui` | Mit Fenster starten |
+| `--port 8800` / `--kein-browser` | Anderer Port / Fenster nicht automatisch öffnen |
 | `--einrichten` | Name und Zuhör-Art neu festlegen |
 | `--zuhoeren immer` | Auf alles reagieren, nicht nur auf den Namen |
 | `--fenster 60` | So lange (Sekunden) nach einer Antwort ohne Namen weiterreden |
@@ -198,6 +221,7 @@ stimme/
 │   ├── werkzeuge.py  ← Websuche (ddgs / SearXNG)
 │   ├── bilder.py     ← Bildpfade finden, HEIC umwandeln (sips), Bild-Modell wählen
 │   ├── vorausdenken.py ← Hintergrund-Notizen und „Übrigens …“
+│   ├── gui.py / gui.html ← Fenster: lokaler Server (SSE), Upload, Mikro-Schalter
 │   ├── stt.py        ← mlx-whisper (Apple Silicon) oder faster-whisper
 │   ├── tts.py        ← Piper, Stimmen-Suche
 │   ├── vad.py        ← Silero VAD (pysilero-vad, ohne PyTorch) + Turn-Erkennung
@@ -213,4 +237,4 @@ cd stimme && uv run --with pytest --with-editable . pytest -q
 
 Gesucht wird die Stimme in `~/.jarvis-stimme/stimmen`, `~/.openjarvis/voices/piper` und `~/.local/share/piper`.
 
-**Nächste Ideen:** Fenster (GUI) mit Mikro-Knopf, Live-Text und Bild-Ablage (kommt als Nächstes), „Smart Turn“ (erkennt am Satzklang, ob du fertig bist, statt nur Stille), eigene Stimme klonen (Chatterbox / F5-TTS), mehr Werkzeuge (Timer, Kalender, Dateien).
+**Nächste Ideen:** „Smart Turn“ (erkennt am Satzklang, ob du fertig bist, statt nur Stille), eigene Stimme klonen (Chatterbox / F5-TTS), mehr Werkzeuge (Timer, Kalender, Dateien).

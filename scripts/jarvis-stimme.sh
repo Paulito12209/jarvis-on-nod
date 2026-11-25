@@ -15,6 +15,7 @@
 #    ./scripts/jarvis-stimme.sh
 #
 #  Nützliche Extras (einfach hinten anhängen):
+#    --gui                  mit Fenster (Mikro-Knopf, Live-Text, Bilder reinziehen)
 #    --test                 alles einmal durchmessen
 #    --modell gemma4:12b    ein bestimmtes Modell nehmen
 #    --pause 0.4            schneller "fertig" erkennen (Standard 0.6 Sekunden)

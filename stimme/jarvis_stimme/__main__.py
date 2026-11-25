@@ -56,6 +56,10 @@ def parse_args(argv=None):
                    help="Kein Dazwischenreden (nimm das, wenn Jarvis sich über Lautsprecher selbst unterbricht)")
     p.add_argument("--empfindlichkeit", type=float, default=0.85,
                    help="Wie sicher muss Dazwischenreden erkannt werden (0.5–0.95, Standard 0.85)")
+    p.add_argument("--gui", "--oberflaeche", dest="gui", action="store_true",
+                   help="Mit Fenster starten (Mikro-Knopf, Live-Text, Bilder reinziehen)")
+    p.add_argument("--port", type=int, default=8765, help="Port für das Fenster (Standard 8765)")
+    p.add_argument("--kein-browser", action="store_true", help="Fenster nicht automatisch öffnen")
     p.add_argument("--tippen", action="store_true", help="Tippen statt Sprechen (Antwort kommt trotzdem als Stimme)")
     p.add_argument("--test", action="store_true", help="Alles einmal durchmessen und Zeiten anzeigen")
     p.add_argument("--geraete", action="store_true", help="Mikrofone und Lautsprecher auflisten")
@@ -215,6 +219,17 @@ def main(argv=None) -> int:
         print(f"   Du kannst {name} jederzeit unterbrechen, indem du einfach redest.")
     print()
 
+    if a.gui:
+        from .gui import serve
+
+        info = {"modell": model, "bildmodell": vision, "websuche": settings.tools,
+                "entscheider": router.model if router else None, "nur_tippen": a.tippen}
+        try:
+            serve(conv, info, port=a.port, open_browser=not a.kein_browser)
+        except OSError as e:
+            print(f"⚠️  Fenster ging nicht: {e}")
+    gui_on = a.gui
+
     mic = None
     try:
         if not a.tippen:
@@ -223,6 +238,9 @@ def main(argv=None) -> int:
             print("🎤 Ich höre zu – sprich einfach los (oder tippe).")
 
             def listen():
+                import numpy as np
+
+                n = 0
                 while not conv.finished.is_set():
                     try:
                         chunk = mic.chunks.get(timeout=0.2)
@@ -230,6 +248,11 @@ def main(argv=None) -> int:
                         conv.tick()
                         continue
                     conv.on_mic_chunk(chunk, vad(chunk))
+                    n += 1
+                    if gui_on and n % 3 == 0:
+                        rms = float(np.sqrt(np.mean((chunk.astype(np.float32) / 32768.0) ** 2)))
+                        level = min(1.0, rms * 12) if conv.listening else 0.0
+                        conv.emit("pegel", wert=round(level, 3))
 
             threading.Thread(target=listen, daemon=True).start()
         # Keyboard works at the same time as the microphone.
