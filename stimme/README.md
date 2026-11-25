@@ -62,10 +62,56 @@ So siehst du genau, welcher Teil am meisten Zeit braucht.
 
 ---
 
+## 🪟 Mit Fenster (neu in 0.3)
+
+<p align="center"><img src="docs/fenster.png" alt="Jarvis-Fenster: leuchtende Kugel, Gespräch als Sprechblasen, Eingabefeld mit Mikro-, Bild- und Stopp-Knopf" width="360"></p>
+
+```sh
+./scripts/jarvis-stimme.sh --gui
+```
+
+Oder im Finder einfach **`scripts/Jarvis-Fenster.command` doppelklicken**.
+
+Es öffnet sich ein Fenster mit:
+- einer **leuchtenden Kugel**: blau = bereit, grün = hört zu (bewegt sich mit deiner Stimme), lila = denkt, türkis = spricht,
+- dem **Gespräch als Sprechblasen**, live Wort für Wort,
+- einem **Eingabefeld** zum Tippen (Enter = senden),
+- 🎙️ **Mikro an/aus** (Taste M), ⏹ **Stopp** (Esc),
+- 📎 **Bilder**: reinziehen, mit ⌘V einfügen oder über die Büroklammer auswählen.
+
+Das Fenster läuft in deinem Browser, aber nur auf deinem Computer (`http://127.0.0.1:8765`). Mikrofon und Lautsprecher bleiben bei Python, darum ist es genauso schnell wie im Terminal. Andere Webseiten dürfen nicht mit Jarvis reden.
+
+---
+
+## 📊 Statuszeile im Terminal
+
+Oben im Terminal steht immer eine Zeile, die sich live aktualisiert:
+
+```
+ 🤖 Jarvis · 🧠 gemma4:12b · Kontext ██░░░░░░░░ 1.734 / 8.192 Tokens (21 %) · 🎙️ Mikro an · ⚡ 0,9 s · 💭 denkt
+```
+
+**Kontext** zeigt, wie viel vom „Notizblock“ des Modells schon belegt ist. Wenn der Balken voll wird, vergisst Jarvis den Anfang des Gesprächs. Mehr Platz gibt es mit `--kontext 16384`, das ist aber etwas langsamer. Ausschalten mit `--ohne-statuszeile`.
+
+Tippen und Sprechen laufen in **dieselbe Warteschlange**: Was zuletzt kommt, gewinnt, und Jarvis hört mit dem Alten sofort auf.
+
+---
+
 ## ✨ Neu in Version 0.2: natürlicher, schlauer, aufmerksamer
 
 ### 👋 Ein eigener Name
-Beim ersten Start fragt Jarvis: **„Wie soll dein Assistent heißen?“** Danach reagiert er nur, wenn du seinen Namen sagst, zum Beispiel „Jarvis, wie wird das Wetter?“.
+Beim ersten Start wählst du den Namen mit den **Pfeiltasten ↑/↓ und Enter**, ganz ohne Tippen:
+
+```
+  Wie soll dein Assistent heißen?  (↑/↓ und Enter)
+  ❯ Jarvis   der Klassiker aus Iron Man
+    Friday   Tony Starks Assistentin nach Jarvis
+    Ultron   etwas düsterer
+    HAL      aus 2001: Odyssee im Weltraum
+    ✏️  Eigenen Namen eingeben
+```
+
+Die Wahl wird gemerkt. Danach reagiert er nur, wenn du seinen Namen sagst, zum Beispiel „Jarvis, wie wird das Wetter?“.
 Nach einer Antwort bleibt das Gespräch **30 Sekunden offen**: Dann musst du den Namen nicht jedes Mal wiederholen.
 Einfach nur „Jarvis?“ sagen, und er antwortet sofort „Ja?“, ganz ohne Nachdenken.
 
@@ -118,6 +164,7 @@ Ausschalten: `--nicht-proaktiv`.
 | **Modell bleibt geladen** | Ollama hält das Modell 60 Minuten im Speicher. Kein Neuladen. |
 | **Aufwärmen beim Start** | Whisper, Stimme und Modell laufen einmal vorab, damit die erste Frage schnell ist. |
 | **Kurzer Notizblock** | 8.000 Tokens Kontext statt 64.000 – reicht fürs Gespräch und ist schneller. |
+| **Cache-freundlich** | Der Systemprompt bleibt den ganzen Tag gleich (Uhrzeit und Notizen stehen in der neuesten Nachricht). So muss Ollama das Gespräch nicht jedes Mal neu lesen. |
 | **Kurze Antworten** | Jarvis ist angewiesen, wie im Gespräch zu reden: 1–3 Sätze, keine Listen. |
 | **Whisper-Unsinn filtern** | Bei Stille erfindet Whisper gern „Untertitel von …“. Das wird ignoriert. |
 
@@ -155,6 +202,9 @@ Mit `--test` misst Jarvis alles einmal durch und zeigt dir die Zeiten. Probier r
 | `--geraete` | Mikrofone und Lautsprecher anzeigen |
 | `--mikro 2` / `--lautsprecher 3` | Bestimmtes Gerät nehmen |
 | `--stimme PFAD` | Andere Piper-Stimme (`.onnx`-Datei) |
+| `--gui` | Mit Fenster starten |
+| `--ohne-statuszeile` | Keine Statuszeile oben |
+| `--port 8800` / `--kein-browser` | Anderer Port / Fenster nicht automatisch öffnen |
 | `--einrichten` | Name und Zuhör-Art neu festlegen |
 | `--zuhoeren immer` | Auf alles reagieren, nicht nur auf den Namen |
 | `--fenster 60` | So lange (Sekunden) nach einer Antwort ohne Namen weiterreden |
@@ -198,6 +248,8 @@ stimme/
 │   ├── werkzeuge.py  ← Websuche (ddgs / SearXNG)
 │   ├── bilder.py     ← Bildpfade finden, HEIC umwandeln (sips), Bild-Modell wählen
 │   ├── vorausdenken.py ← Hintergrund-Notizen und „Übrigens …“
+│   ├── gui.py / gui.html ← Fenster: lokaler Server (SSE), Upload, Mikro-Schalter
+│   ├── terminal.py   ← Pfeiltasten-Menü (Namenswahl), Statuszeile oben
 │   ├── stt.py        ← mlx-whisper (Apple Silicon) oder faster-whisper
 │   ├── tts.py        ← Piper, Stimmen-Suche
 │   ├── vad.py        ← Silero VAD (pysilero-vad, ohne PyTorch) + Turn-Erkennung
@@ -213,4 +265,4 @@ cd stimme && uv run --with pytest --with-editable . pytest -q
 
 Gesucht wird die Stimme in `~/.jarvis-stimme/stimmen`, `~/.openjarvis/voices/piper` und `~/.local/share/piper`.
 
-**Nächste Ideen:** Fenster (GUI) mit Mikro-Knopf, Live-Text und Bild-Ablage (kommt als Nächstes), „Smart Turn“ (erkennt am Satzklang, ob du fertig bist, statt nur Stille), eigene Stimme klonen (Chatterbox / F5-TTS), mehr Werkzeuge (Timer, Kalender, Dateien).
+**Nächste Ideen:** „Smart Turn“ (erkennt am Satzklang, ob du fertig bist, statt nur Stille), eigene Stimme klonen (Chatterbox / F5-TTS), mehr Werkzeuge (Timer, Kalender, Dateien).

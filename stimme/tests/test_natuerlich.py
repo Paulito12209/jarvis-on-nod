@@ -20,7 +20,7 @@ class ScriptLLM:
     def __init__(self, rounds, delay=0.0):
         self.rounds, self.delay, self.calls = list(rounds), delay, []
 
-    def stream(self, model, messages, stop=None, tools=None, max_tokens=None):
+    def stream(self, model, messages, stop=None, tools=None, max_tokens=None, usage=None):
         self.calls.append({"model": model, "messages": messages, "tools": tools})
         rnd = self.rounds.pop(0) if self.rounds else ["Okay."]
         if isinstance(rnd, ToolCalls):
@@ -191,7 +191,7 @@ def test_image_goes_to_vision_model(tmp_path):
     c.handle_text(f"Was siehst du? {img}").join(5)
     call = llm.calls[0]
     assert call["model"] == "gemma4:12b"
-    assert call["messages"][-1]["images"] and call["messages"][-1]["content"] == "Was siehst du?"
+    assert call["messages"][-1]["images"] and call["messages"][-1]["content"].endswith("]\nWas siehst du?")
     assert "images" not in c.history[0] and "foto.png" in c.history[0]["content"]
 
 
@@ -221,7 +221,7 @@ def test_thinker_notes_used_and_proactive_suggestion():
     assert tts.spoken and tts.spoken[-1].startswith("Übrigens, soll ich")
     th.notes = "Notiz: Pizza dauert 15 Minuten."
     c.handle_text("Was soll ich kochen?").join(5)
-    assert "Pizza dauert" in llm.calls[-1]["messages"][0]["content"]
+    assert "Pizza dauert" in llm.calls[-1]["messages"][-1]["content"]
 
 
 def test_pick_small_model():

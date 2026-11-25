@@ -29,6 +29,7 @@ WEEKDAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"
 
 
 def system_prompt(name: str = "Jarvis", tools: bool = False, notes: str = "") -> str:
+    """Stays the same all day, so Ollama can reuse its cache (faster first word)."""
     now = datetime.now()
     text = (
         f"Du bist {name}, ein freundlicher, kluger Sprachassistent. Alles, was du schreibst, wird "
@@ -36,8 +37,8 @@ def system_prompt(name: str = "Jarvis", tools: bool = False, notes: str = "") ->
         "einem echten Gespräch, meistens in ein bis drei kurzen Sätzen. Fang direkt mit der Antwort "
         "an, ohne Einleitung. Keine Listen, kein Markdown, keine Emojis, keine Tabellen. Wenn etwas "
         "länger ist, gib zuerst die Kurzfassung und biete an, mehr zu erzählen. Wenn du etwas nicht "
-        f"weißt, sag es ehrlich. Heute ist {WEEKDAYS[now.weekday()]}, der {now:%d.%m.%Y}, "
-        f"es ist {now:%H:%M} Uhr. Dein eingebautes Wissen ist älter als heute. "
+        f"weißt, sag es ehrlich. Heute ist {WEEKDAYS[now.weekday()]}, der {now:%d.%m.%Y}. "
+        "Dein eingebautes Wissen ist älter als heute. "
         "Behaupte nie, etwas gesehen, geöffnet, gesucht oder erledigt zu haben, was du nicht "
         "wirklich getan hast. Bilder kannst du nur sehen, wenn sie dir mitgeschickt werden."
     )
@@ -47,6 +48,16 @@ def system_prompt(name: str = "Jarvis", tools: bool = False, notes: str = "") ->
         text += ("\n\nDeine vorab gesammelten Notizen zum Thema (nur nutzen, wenn sie passen, "
                  "nicht erwähnen, dass es Notizen sind):\n" + notes[:1200])
     return text
+
+
+def turn_context(notes: str = "") -> str:
+    """Things that change every turn. They go into the newest message, not the system prompt,
+    so everything before it stays cached."""
+    now = datetime.now()
+    extra = f"[Uhrzeit: {now:%H:%M}"
+    if notes:
+        extra += "; vorab gesammelte Notizen (nur nutzen, wenn passend, nicht erwähnen): " + notes[:1200]
+    return extra + "]\n"
 
 
 @dataclass
@@ -124,7 +135,16 @@ class Conversation:
         self._barge_chunks = max(1, round(settings.barge_in_min / CHUNK_SEC))
         self.last_activity = time.monotonic()
         self.last_answer = 0.0
+        self.listening = True  # microphone on/off (GUI button)
+        self.on_event = None  # callback(dict) for the GUI
         threading.Thread(target=self._tts_worker, daemon=True).start()
+
+    def emit(self, kind: str, **data) -> None:
+        if self.on_event is not None:
+            try:
+                self.on_event({"typ": kind, **data})
+            except Exception:
+                pass
 
     # -- state -------------------------------------------------------------------------
     @property
@@ -148,6 +168,9 @@ class Conversation:
 
     # -- microphone side ---------------------------------------------------------------
     def on_mic_chunk(self, chunk: np.ndarray, prob: float) -> None:
+        if not self.listening:
+            self.detector.reset()
+            return
         busy = self.assistant_busy
         if busy and not self.s.barge_in:
             self.detector.reset()
@@ -171,9 +194,12 @@ class Conversation:
             if busy:
                 self.interrupt()
                 self.out("✋ Unterbrochen – ich höre zu …")
+                self.emit("unterbrochen")
             else:
                 self.out("🎤 …")
+            self.emit("status", status="hoert")
         elif ev.kind == "end":
+            self.emit("status", status="denkt")
             self.handle_audio(ev.audio, end_time=time.monotonic())
 
     def tick(self, now: float | None = None) -> None:
@@ -192,6 +218,7 @@ class Conversation:
         if not text.lower().startswith(("übrigens", "ach", "kleiner tipp", "wenn du")):
             text = "Übrigens, " + text[0].lower() + text[1:]
         self.out(f"💡 {self.s.name}: {text}")
+        self.emit("vorschlag", text=text)
         self.history.append({"role": "assistant", "content": text})
         self.attention.open_window()
         self.last_answer = time.monotonic()
@@ -231,8 +258,11 @@ class Conversation:
                 decision.answer, self.attention.quiet = "ja", False
             if decision.answer == "nein":
                 self.out(f"💤 ({decision.reason}) {text}")
+                self.emit("ignoriert", text=text, grund=decision.reason)
                 return
             self.out(f"🗣️  Du: {text}")
+            self.emit("du", text=text, getippt=direct)
+            self.emit("status", status="denkt")
             if decision.answer == "still":
                 self._say_now(turn, "Okay, ich bin still. Sag einfach meinen Namen, wenn du mich brauchst.")
                 self._finish(turn)
@@ -272,6 +302,7 @@ class Conversation:
                     for p in paths[:3]:
                         images.append(load_image_b64(p))
                         self.out(f"🖼️  Bild geladen: {p}")
+                        self.emit("bild", pfad=p)
                 except ValueError as e:
                     self._approve(turn, True)
                     self._say_now(turn, str(e))
@@ -283,9 +314,11 @@ class Conversation:
             self.history = self.history[-2 * self.s.history_turns:]
             notes = self.thinker.take_notes() if self.thinker else ""
             use_tools = self.s.tools
-            messages = [{"role": "system", "content": system_prompt(self.s.name, use_tools, notes)}] + self.history
+            messages = [{"role": "system", "content": system_prompt(self.s.name, use_tools)}] + self.history
+            last = {"role": "user", "content": turn_context(notes) + (user_text if images else messages[-1]["content"])}
             if images:
-                messages[-1] = {"role": "user", "content": user_text, "images": images}
+                last["images"] = images
+            messages[-1] = last
 
             reply = self._generate(turn, messages, stop, use_tools, model)
             if not turn.approved:
@@ -293,6 +326,7 @@ class Conversation:
                 if self.history and self.history[-1].get("role") == "user":
                     self.history.pop()
                 self.out("💤 (war nicht an mich gerichtet)")
+                self.emit("ignoriert", text=text, grund="war nicht an mich gerichtet")
                 return
             if reply:
                 if not self._current(turn):
@@ -304,15 +338,19 @@ class Conversation:
                 self.last_answer = time.monotonic()
                 if self.s.show_times and times.first_audio:
                     self.out(times.summary(self.s.pause))
+                    self.emit("zeit", sekunden=round(times.first_audio - times.end_of_speech, 2),
+                              text=times.summary(self.s.pause))
                 if self.thinker and not goodbye:
                     self.thinker.start(self.history)
                 if goodbye:
                     self.finished.set()
         except Exception as e:  # keep the loop alive and say what went wrong
             self.out(f"\n⚠️  Fehler: {e}")
+            self.emit("fehler", text=str(e))
         finally:
             if self._current(turn):
                 self._generating.clear()
+                self.emit("status", status="bereit")
 
     def _finish(self, turn: _Turn) -> None:
         """Wait until everything is spoken."""
@@ -325,11 +363,12 @@ class Conversation:
         """Stream the answer; run tools (web search) if the model asks for them."""
         chunker = SentenceChunker()
         answer: list[str] = []
+        usage: dict = {}
         printed_header = False
         for _round in range(self.s.max_tool_rounds + 1):
             calls = None
             tools = TOOLS if use_tools and _round < self.s.max_tool_rounds else None
-            for piece in self.llm.stream(model or self.s.model, messages, stop=stop, tools=tools):
+            for piece in self.llm.stream(model or self.s.model, messages, stop=stop, tools=tools, usage=usage):
                 if not self._current(turn) or stop.is_set():
                     return "".join(answer).strip()
                 if not isinstance(piece, str):
@@ -340,9 +379,11 @@ class Conversation:
                 if not printed_header and turn.approved:
                     self.out(f"🤖 {self.s.name}: ", end="")
                     printed_header = True
+                    self.emit("antwort_start", text="".join(answer))
                 answer.append(piece)
                 if printed_header:
                     self.out(piece, end="")
+                    self.emit("token", text=piece)
                 for chunk in chunker.feed(piece):
                     self._speak(turn, chunk)
                 if turn.decided.is_set() and not turn.approved:
@@ -359,19 +400,26 @@ class Conversation:
             for call in calls:
                 fn = call.get("function", {})
                 args = fn.get("arguments", {})
-                self.out(f"🔎 Suche: {args.get('suchbegriff', args) if isinstance(args, dict) else args}")
+                q = args.get("suchbegriff", args) if isinstance(args, dict) else args
+                self.out(f"🔎 Suche: {q}")
+                self.emit("suche", text=str(q))
                 result = run_tool(fn.get("name", ""), args)
                 messages.append({"role": "tool", "content": result, "tool_name": fn.get("name", "")})
             if not self._current(turn):
                 return "".join(answer).strip()
         for chunk in chunker.flush():
             self._speak(turn, chunk)
+        if usage:
+            limit = getattr(self.llm, "num_ctx", 0) or 0
+            self.emit("kontext", benutzt=usage.get("prompt", 0) + usage.get("antwort", 0), limit=limit)
         self._wait_decision(turn)
         if turn.approved:
             if not printed_header:
                 self.out(f"🤖 {self.s.name}: {''.join(answer).strip()}")
+                self.emit("antwort_start", text="".join(answer).strip())
             else:
                 self.out("")
+            self.emit("antwort_ende")
         return "".join(answer).strip()
 
     # -- deciding ----------------------------------------------------------------------
@@ -412,6 +460,9 @@ class Conversation:
         self._tts_q.put((turn.id, chunk, turn.times))
 
     def _say_now(self, turn: _Turn, text: str) -> None:
+        self.out(f"🤖 {self.s.name}: {text}")
+        self.emit("antwort_start", text=text)
+        self.emit("antwort_ende")
         self._tts_q.put((turn.id, text, turn.times))
 
     def _filler_timer(self, turn: _Turn, kind: str) -> None:
@@ -449,6 +500,7 @@ class Conversation:
             self.player.play(breath, on_start=mark)
         self.player.play(audio, on_start=mark)
         self.out(f"   💬 {phrase}")
+        self.emit("bruecke", text=phrase)
         return phrase
 
     def _tts_worker(self) -> None:
@@ -464,6 +516,7 @@ class Conversation:
                 def mark(t=times):
                     if not t.first_audio:
                         t.first_audio = time.monotonic()
+                    self.emit("status", status="spricht")
 
                 self.player.play(audio, on_start=mark)
             except Exception as e:

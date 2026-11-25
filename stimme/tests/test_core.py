@@ -162,7 +162,7 @@ class FakeLLM:
     def __init__(self, tokens, delay=0.0):
         self.tokens, self.delay = tokens, delay
 
-    def stream(self, model, messages, stop=None, tools=None, max_tokens=None):
+    def stream(self, model, messages, stop=None, tools=None, max_tokens=None, usage=None):
         for t in self.tokens:
             if stop is not None and stop.is_set():
                 return
