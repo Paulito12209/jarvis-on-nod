@@ -4,10 +4,41 @@ from __future__ import annotations
 
 import argparse
 import sys
+import threading
 import time
 
 from . import __version__
-from .llm import OllamaChat, OllamaError, pick_model
+from .llm import OllamaChat, OllamaError, pick_model, pick_small_model
+from .tts import APP_HOME
+
+CONFIG = APP_HOME / "einstellungen.json"
+
+
+def load_config() -> dict:
+    try:
+        import json
+
+        return json.loads(CONFIG.read_text())
+    except Exception:
+        return {}
+
+
+def save_config(cfg: dict) -> None:
+    import json
+
+    CONFIG.parent.mkdir(parents=True, exist_ok=True)
+    CONFIG.write_text(json.dumps(cfg, indent=2, ensure_ascii=False))
+
+
+def setup(cfg: dict) -> dict:
+    """First start: ask for the assistant's name and how it should listen."""
+    print("\n✨ Kurze Einrichtung (nur einmal, ändern mit --einrichten)\n")
+    name = input(f"  Wie soll dein Assistent heißen? [{cfg.get('name', 'Jarvis')}] ").strip() or cfg.get("name", "Jarvis")
+    ans = input(f"  Soll {name} nur reagieren, wenn du seinen Namen sagst? (empfohlen) [J/n] ").strip().lower()
+    cfg.update(name=name, zuhoeren="immer" if ans in ("n", "nein", "no") else "name")
+    save_config(cfg)
+    print(f"  ✔ Gespeichert in {CONFIG}\n")
+    return cfg
 
 
 def parse_args(argv=None):
@@ -32,7 +63,18 @@ def parse_args(argv=None):
     p.add_argument("--lautsprecher", help="Lautsprecher (Nummer oder Name aus --geraete)")
     p.add_argument("--ollama", default="http://localhost:11434", help="Adresse von Ollama")
     p.add_argument("--kontext", type=int, default=8192, help="Kontextlänge für das Modell (klein = schneller)")
-    p.add_argument("--name", default="Jarvis", help="Name des Assistenten")
+    p.add_argument("--name", help="Name des Assistenten (Standard: aus der Einrichtung, sonst Jarvis)")
+    p.add_argument("--einrichten", action="store_true", help="Name und Zuhör-Art neu festlegen")
+    p.add_argument("--zuhoeren", choices=["name", "immer"],
+                   help="'name' = nur reagieren, wenn der Name fällt (danach Gesprächsfenster); 'immer' = auf alles")
+    p.add_argument("--fenster", type=float, default=30.0,
+                   help="Sekunden nach einer Antwort, in denen du den Namen nicht sagen musst (Standard 30)")
+    p.add_argument("--entscheider", help="Kleines Modell, das entscheidet ob du mich meinst (Standard: automatisch, 'aus' = keins)")
+    p.add_argument("--bildmodell", help="Modell zum Bilder-Ansehen (Standard: automatisch, z. B. gemma4:12b)")
+    p.add_argument("--ohne-bruecken", action="store_true", help="Keine Brückensätze wie 'Mhm' oder 'Gute Frage'")
+    p.add_argument("--ohne-atmen", action="store_true", help="Kein leises Einatmen vor Antworten")
+    p.add_argument("--ohne-websuche", action="store_true", help="Keine Websuche")
+    p.add_argument("--nicht-proaktiv", action="store_true", help="Kein Vorausdenken und keine 'Übrigens …'-Vorschläge")
     p.add_argument("--version", action="version", version=f"jarvis-stimme {__version__}")
     return p.parse_args(argv)
 
@@ -61,17 +103,27 @@ def main(argv=None) -> int:
         print(sd.query_devices())
         return 0
 
-    print("\n🤖 Jarvis Stimme – alles läuft lokal auf deinem Computer\n")
+    cfg = load_config()
+    if (a.einrichten or not cfg) and not a.test and sys.stdin.isatty():
+        try:
+            cfg = setup(cfg)
+        except (EOFError, KeyboardInterrupt):
+            pass
+    name = a.name or cfg.get("name") or "Jarvis"
+    listen_mode = a.zuhoeren or cfg.get("zuhoeren") or "name"
+    if a.tippen:
+        listen_mode = "immer"
+
+    print(f"\n🤖 {name} – alles läuft lokal auf deinem Computer\n")
 
     # 1) Brain (Ollama) – start loading first, it takes longest.
     llm = OllamaChat(a.ollama, num_ctx=a.kontext)
     try:
-        model = pick_model(llm.list_models(), a.modell)
+        installed = llm.list_models()
+        model = pick_model(installed, a.modell)
     except OllamaError as e:
         print(f"❌ {e}")
         return 2
-
-    import threading
 
     warm_err: list[Exception] = []
 
@@ -102,6 +154,7 @@ def main(argv=None) -> int:
     from . import stt as stt_mod
     from .vad import make_vad
 
+    stt_mod.PROMPT = f"Hallo {name}. Das ist ein Gespräch auf Deutsch."
     t0 = step("Ohren laden (Whisper, beim ersten Mal wird es heruntergeladen)")
     stt = stt_mod.make_stt(a.whisper)
     stt_mod.warmup(stt)
@@ -120,40 +173,91 @@ def main(argv=None) -> int:
 
     from .app import Conversation, Settings
     from .audio import Microphone, Player
+    from .bilder import pick_vision_model
+    from .bruecken import FillerBank
+    from .vorausdenken import Thinker
+    from .zuhoeren import Router
+
+    # Helpers: bridge phrases, decision model, vision model, background thinker.
+    fillers = None
+    if not a.ohne_bruecken:
+        fillers = FillerBank(tts, breath_chance=0.0 if a.ohne_atmen else 0.3)
+        fillers.prepare(background=True)
+    router = None
+    if listen_mode == "name" and (a.entscheider or "").lower() != "aus":
+        small = a.entscheider or pick_small_model(installed)
+        if small:
+            router = Router(llm, small, name)
+            threading.Thread(target=lambda: llm.warmup(small), daemon=True).start()
+    if a.bildmodell:
+        vision = pick_model(installed, a.bildmodell)
+    else:
+        vision = pick_vision_model(llm, installed, model)
+    thinker = None if a.nicht_proaktiv else Thinker(llm, model, name)
 
     player = Player(tts.sample_rate, device=_device(a.lautsprecher))
     settings = Settings(model=model, pause=a.pause, barge_in=not a.ohne_unterbrechen,
-                        barge_in_threshold=a.empfindlichkeit, name=a.name)
-    conv = Conversation(settings, stt, llm, tts, player,
-                        out=lambda *x, **k: print(*x, **k, flush=True))
+                        barge_in_threshold=a.empfindlichkeit, name=name, listen_mode=listen_mode,
+                        window=a.fenster, tools=not a.ohne_websuche, proactive=not a.nicht_proaktiv,
+                        vision_model=vision)
+    conv = Conversation(settings, stt, llm, tts, player, out=lambda *x, **k: print(*x, **k, flush=True),
+                        fillers=fillers, router=router, thinker=thinker)
 
     print(f"\n✅ Bereit!  Modell: {model} · Stimme: {tts.name} · Erkennung: {vad_name}")
-    print("   Sag 'Tschüss Jarvis' oder drück Ctrl+C zum Beenden.")
+    print(f"   Entscheider: {router.model if router else '–'} · Bilder: {vision or '– (kein Bild-Modell)'}"
+          f" · Websuche: {'an' if settings.tools else 'aus'} · Brücken: {fillers.count() if fillers else 0}")
+    if listen_mode == "name":
+        print(f"   👂 Ich reagiere, wenn du „{name}“ sagst. Danach {a.fenster:.0f} s ohne Namen.")
+        print(f"      „{name}, sei mal still“ = Ruhe, bis du mich wieder beim Namen rufst.")
+    print("   ⌨️  Du kannst auch einfach tippen und Enter drücken. Bilder: Datei ins Fenster ziehen + Enter.")
+    print(f"   Sag „Tschüss {name}“ oder drück Ctrl+C zum Beenden.")
     if settings.barge_in:
-        print("   Du kannst Jarvis jederzeit unterbrechen, indem du einfach redest.")
+        print(f"   Du kannst {name} jederzeit unterbrechen, indem du einfach redest.")
     print()
 
+    mic = None
     try:
-        if a.tippen:
-            while not conv.finished.is_set():
-                line = input("⌨️  Du: ").strip()
-                if line:
-                    conv.handle_text(line).join()
-        else:
+        if not a.tippen:
             mic = Microphone(device=_device(a.mikro))
             mic.start()
-            print("🎤 Ich höre zu – sprich einfach los.")
-            while not conv.finished.is_set():
-                try:
-                    chunk = mic.chunks.get(timeout=0.2)
-                except Exception:
-                    continue
-                conv.on_mic_chunk(chunk, vad(chunk))
-            mic.close()
-    except (KeyboardInterrupt, EOFError):
+            print("🎤 Ich höre zu – sprich einfach los (oder tippe).")
+
+            def listen():
+                while not conv.finished.is_set():
+                    try:
+                        chunk = mic.chunks.get(timeout=0.2)
+                    except Exception:
+                        conv.tick()
+                        continue
+                    conv.on_mic_chunk(chunk, vad(chunk))
+
+            threading.Thread(target=listen, daemon=True).start()
+        # Keyboard works at the same time as the microphone.
+        keyboard_done = threading.Event()
+
+        def keyboard():
+            try:
+                while not conv.finished.is_set():
+                    line = input("").strip() if not a.tippen else input("⌨️  Du: ").strip()
+                    if line:
+                        t = conv.handle_text(line)
+                        if a.tippen:
+                            t.join()
+            except (EOFError, KeyboardInterrupt):
+                pass
+            keyboard_done.set()
+
+        threading.Thread(target=keyboard, daemon=True).start()
+        while not conv.finished.is_set():
+            if a.tippen and keyboard_done.is_set():
+                break
+            conv.finished.wait(0.3)
+    except KeyboardInterrupt:
         pass
     finally:
         conv.interrupt()
+        if mic is not None:
+            mic.close()
         player.close()
     print("\n👋 Tschüss!")
     return 0

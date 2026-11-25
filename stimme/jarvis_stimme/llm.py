@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import threading
 import urllib.error
 import urllib.request
@@ -63,6 +64,8 @@ class OllamaChat:
         self.keep_alive = keep_alive
         self.temperature = temperature
         self._think_supported: dict[str, bool] = {}
+        self._tools_supported: dict[str, bool] = {}
+        self._caps: dict[str, list[str]] = {}
 
     # -- helpers -----------------------------------------------------------------
     def _request(self, path: str, payload: dict | None = None, timeout: float = 600):
@@ -86,11 +89,11 @@ class OllamaChat:
         with self._request("/api/tags", timeout=5) as r:
             return [m["name"] for m in json.load(r).get("models", [])]
 
-    def _payload(self, model: str, messages: list[dict], think: bool | None) -> dict:
+    def _payload(self, model: str, messages: list[dict], think: bool | None, stream: bool = True) -> dict:
         p = {
             "model": model,
             "messages": messages,
-            "stream": True,
+            "stream": stream,
             "keep_alive": self.keep_alive,
             "options": {"num_ctx": self.num_ctx, "temperature": self.temperature},
         }
@@ -103,22 +106,50 @@ class OllamaChat:
         for _ in self.stream(model, [{"role": "user", "content": "Hallo"}], max_tokens=1):
             pass
 
+    def _post_chat(self, model: str, payload: dict):
+        """POST /api/chat; if the model refuses 'think' or 'tools', retry without it."""
+        for _ in range(3):
+            try:
+                return self._request("/api/chat", payload)
+            except OllamaError as e:
+                err = str(e).lower()
+                if "think" in payload and "think" in err:
+                    self._think_supported[model] = False
+                    payload.pop("think")
+                elif "tools" in payload and "tool" in err:
+                    self._tools_supported[model] = False
+                    payload.pop("tools")
+                else:
+                    raise
+        return self._request("/api/chat", payload)
+
+    def capabilities(self, model: str) -> list[str]:
+        """What a model can do, e.g. ["completion", "tools", "vision", "thinking"]."""
+        if model not in self._caps:
+            try:
+                with self._request("/api/show", {"model": model}, timeout=10) as r:
+                    self._caps[model] = list(json.load(r).get("capabilities") or [])
+            except (OllamaError, ValueError, OSError):
+                self._caps[model] = []
+        return self._caps[model]
+
+    def supports_tools(self, model: str) -> bool:
+        if model in self._tools_supported:
+            return self._tools_supported[model]
+        caps = self.capabilities(model)
+        return "tools" in caps if caps else True
+
     def stream(self, model: str, messages: list[dict], stop: threading.Event | None = None,
-               max_tokens: int | None = None) -> Iterator[str]:
-        """Yield answer text piece by piece. Thinking is switched off (it only costs time)."""
+               max_tokens: int | None = None, tools: list[dict] | None = None) -> Iterator[str | ToolCalls]:
+        """Yield answer text piece by piece (or a ToolCalls object if the model wants a tool).
+        Thinking is switched off – it only costs time when talking."""
         think: bool | None = False if self._think_supported.get(model, True) else None
         payload = self._payload(model, messages, think)
         if max_tokens:
             payload["options"]["num_predict"] = max_tokens
-        try:
-            resp = self._request("/api/chat", payload)
-        except OllamaError as e:
-            if think is not None and "think" in str(e).lower():
-                self._think_supported[model] = False
-                payload.pop("think", None)
-                resp = self._request("/api/chat", payload)
-            else:
-                raise
+        if tools and self.supports_tools(model):
+            payload["tools"] = tools
+        resp = self._post_chat(model, payload)
         with resp:
             for line in resp:
                 if stop is not None and stop.is_set():
@@ -129,8 +160,46 @@ class OllamaChat:
                 msg = json.loads(line)
                 if msg.get("error"):
                     raise OllamaError(msg["error"])
-                piece = msg.get("message", {}).get("content", "")
+                m = msg.get("message", {})
+                if m.get("tool_calls"):
+                    yield ToolCalls(m["tool_calls"])
+                piece = m.get("content", "")
                 if piece:
                     yield piece
                 if msg.get("done"):
                     return
+
+    def complete(self, model: str, messages: list[dict], format: dict | str | None = None,
+                 max_tokens: int | None = None) -> str:
+        """One answer in one go (for small helper jobs like the router)."""
+        think: bool | None = False if self._think_supported.get(model, True) else None
+        payload = self._payload(model, messages, think, stream=False)
+        payload["options"]["temperature"] = 0.0
+        if max_tokens:
+            payload["options"]["num_predict"] = max_tokens
+        if format is not None:
+            payload["format"] = format
+        with self._post_chat(model, payload) as r:
+            return json.load(r).get("message", {}).get("content", "")
+
+
+class ToolCalls(list):
+    """The model asked to use one or more tools: [{"function": {"name": ..., "arguments": {...}}}]."""
+
+
+SMALL_PREFERENCE = ["qwen3.5:2b", "qwen3:1.7b", "qwen3.5:0.8b", "gemma4:1b", "gemma3:1b",
+                    "llama3.2:1b", "qwen3.5:4b", "qwen3:4b", "gemma4:4b", "llama3.2:3b", "gemma3:4b"]
+
+
+def pick_small_model(installed: list[str]) -> str | None:
+    """A tiny model (<= 4B) for quick decisions, or None if there is none."""
+    for pref in SMALL_PREFERENCE:
+        for name in installed:
+            if name == pref or name.startswith(pref):
+                return name
+    sized = []
+    for name in installed:
+        m = re.search(r":(\d+(?:\.\d+)?)b\b", name)
+        if m and float(m.group(1)) <= 4 and not any(w in name for w in _SKIP_WORDS):
+            sized.append((float(m.group(1)), name))
+    return min(sized)[1] if sized else None
