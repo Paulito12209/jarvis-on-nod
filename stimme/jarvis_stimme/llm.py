@@ -140,7 +140,8 @@ class OllamaChat:
         return "tools" in caps if caps else True
 
     def stream(self, model: str, messages: list[dict], stop: threading.Event | None = None,
-               max_tokens: int | None = None, tools: list[dict] | None = None) -> Iterator[str | ToolCalls]:
+               max_tokens: int | None = None, tools: list[dict] | None = None,
+               usage: dict | None = None) -> Iterator[str | ToolCalls]:
         """Yield answer text piece by piece (or a ToolCalls object if the model wants a tool).
         Thinking is switched off – it only costs time when talking."""
         think: bool | None = False if self._think_supported.get(model, True) else None
@@ -167,6 +168,9 @@ class OllamaChat:
                 if piece:
                     yield piece
                 if msg.get("done"):
+                    if usage is not None:
+                        usage["prompt"] = int(msg.get("prompt_eval_count") or 0)
+                        usage["antwort"] = int(msg.get("eval_count") or 0)
                     return
 
     def complete(self, model: str, messages: list[dict], format: dict | str | None = None,

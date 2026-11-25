@@ -83,10 +83,35 @@ Das Fenster läuft in deinem Browser, aber nur auf deinem Computer (`http://127.
 
 ---
 
+## 📊 Statuszeile im Terminal
+
+Oben im Terminal steht immer eine Zeile, die sich live aktualisiert:
+
+```
+ 🤖 Jarvis · 🧠 gemma4:12b · Kontext ██░░░░░░░░ 1.734 / 8.192 Tokens (21 %) · 🎙️ Mikro an · ⚡ 0,9 s · 💭 denkt
+```
+
+**Kontext** zeigt, wie viel vom „Notizblock“ des Modells schon belegt ist. Wenn der Balken voll wird, vergisst Jarvis den Anfang des Gesprächs. Mehr Platz gibt es mit `--kontext 16384`, das ist aber etwas langsamer. Ausschalten mit `--ohne-statuszeile`.
+
+Tippen und Sprechen laufen in **dieselbe Warteschlange**: Was zuletzt kommt, gewinnt, und Jarvis hört mit dem Alten sofort auf.
+
+---
+
 ## ✨ Neu in Version 0.2: natürlicher, schlauer, aufmerksamer
 
 ### 👋 Ein eigener Name
-Beim ersten Start fragt Jarvis: **„Wie soll dein Assistent heißen?“** Danach reagiert er nur, wenn du seinen Namen sagst, zum Beispiel „Jarvis, wie wird das Wetter?“.
+Beim ersten Start wählst du den Namen mit den **Pfeiltasten ↑/↓ und Enter**, ganz ohne Tippen:
+
+```
+  Wie soll dein Assistent heißen?  (↑/↓ und Enter)
+  ❯ Jarvis   der Klassiker aus Iron Man
+    Friday   Tony Starks Assistentin nach Jarvis
+    Ultron   etwas düsterer
+    HAL      aus 2001: Odyssee im Weltraum
+    ✏️  Eigenen Namen eingeben
+```
+
+Die Wahl wird gemerkt. Danach reagiert er nur, wenn du seinen Namen sagst, zum Beispiel „Jarvis, wie wird das Wetter?“.
 Nach einer Antwort bleibt das Gespräch **30 Sekunden offen**: Dann musst du den Namen nicht jedes Mal wiederholen.
 Einfach nur „Jarvis?“ sagen, und er antwortet sofort „Ja?“, ganz ohne Nachdenken.
 
@@ -139,6 +164,7 @@ Ausschalten: `--nicht-proaktiv`.
 | **Modell bleibt geladen** | Ollama hält das Modell 60 Minuten im Speicher. Kein Neuladen. |
 | **Aufwärmen beim Start** | Whisper, Stimme und Modell laufen einmal vorab, damit die erste Frage schnell ist. |
 | **Kurzer Notizblock** | 8.000 Tokens Kontext statt 64.000 – reicht fürs Gespräch und ist schneller. |
+| **Cache-freundlich** | Der Systemprompt bleibt den ganzen Tag gleich (Uhrzeit und Notizen stehen in der neuesten Nachricht). So muss Ollama das Gespräch nicht jedes Mal neu lesen. |
 | **Kurze Antworten** | Jarvis ist angewiesen, wie im Gespräch zu reden: 1–3 Sätze, keine Listen. |
 | **Whisper-Unsinn filtern** | Bei Stille erfindet Whisper gern „Untertitel von …“. Das wird ignoriert. |
 
@@ -177,6 +203,7 @@ Mit `--test` misst Jarvis alles einmal durch und zeigt dir die Zeiten. Probier r
 | `--mikro 2` / `--lautsprecher 3` | Bestimmtes Gerät nehmen |
 | `--stimme PFAD` | Andere Piper-Stimme (`.onnx`-Datei) |
 | `--gui` | Mit Fenster starten |
+| `--ohne-statuszeile` | Keine Statuszeile oben |
 | `--port 8800` / `--kein-browser` | Anderer Port / Fenster nicht automatisch öffnen |
 | `--einrichten` | Name und Zuhör-Art neu festlegen |
 | `--zuhoeren immer` | Auf alles reagieren, nicht nur auf den Namen |
@@ -222,6 +249,7 @@ stimme/
 │   ├── bilder.py     ← Bildpfade finden, HEIC umwandeln (sips), Bild-Modell wählen
 │   ├── vorausdenken.py ← Hintergrund-Notizen und „Übrigens …“
 │   ├── gui.py / gui.html ← Fenster: lokaler Server (SSE), Upload, Mikro-Schalter
+│   ├── terminal.py   ← Pfeiltasten-Menü (Namenswahl), Statuszeile oben
 │   ├── stt.py        ← mlx-whisper (Apple Silicon) oder faster-whisper
 │   ├── tts.py        ← Piper, Stimmen-Suche
 │   ├── vad.py        ← Silero VAD (pysilero-vad, ohne PyTorch) + Turn-Erkennung

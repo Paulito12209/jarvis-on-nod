@@ -29,6 +29,7 @@ WEEKDAYS = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"
 
 
 def system_prompt(name: str = "Jarvis", tools: bool = False, notes: str = "") -> str:
+    """Stays the same all day, so Ollama can reuse its cache (faster first word)."""
     now = datetime.now()
     text = (
         f"Du bist {name}, ein freundlicher, kluger Sprachassistent. Alles, was du schreibst, wird "
@@ -36,8 +37,8 @@ def system_prompt(name: str = "Jarvis", tools: bool = False, notes: str = "") ->
         "einem echten Gespräch, meistens in ein bis drei kurzen Sätzen. Fang direkt mit der Antwort "
         "an, ohne Einleitung. Keine Listen, kein Markdown, keine Emojis, keine Tabellen. Wenn etwas "
         "länger ist, gib zuerst die Kurzfassung und biete an, mehr zu erzählen. Wenn du etwas nicht "
-        f"weißt, sag es ehrlich. Heute ist {WEEKDAYS[now.weekday()]}, der {now:%d.%m.%Y}, "
-        f"es ist {now:%H:%M} Uhr. Dein eingebautes Wissen ist älter als heute. "
+        f"weißt, sag es ehrlich. Heute ist {WEEKDAYS[now.weekday()]}, der {now:%d.%m.%Y}. "
+        "Dein eingebautes Wissen ist älter als heute. "
         "Behaupte nie, etwas gesehen, geöffnet, gesucht oder erledigt zu haben, was du nicht "
         "wirklich getan hast. Bilder kannst du nur sehen, wenn sie dir mitgeschickt werden."
     )
@@ -47,6 +48,16 @@ def system_prompt(name: str = "Jarvis", tools: bool = False, notes: str = "") ->
         text += ("\n\nDeine vorab gesammelten Notizen zum Thema (nur nutzen, wenn sie passen, "
                  "nicht erwähnen, dass es Notizen sind):\n" + notes[:1200])
     return text
+
+
+def turn_context(notes: str = "") -> str:
+    """Things that change every turn. They go into the newest message, not the system prompt,
+    so everything before it stays cached."""
+    now = datetime.now()
+    extra = f"[Uhrzeit: {now:%H:%M}"
+    if notes:
+        extra += "; vorab gesammelte Notizen (nur nutzen, wenn passend, nicht erwähnen): " + notes[:1200]
+    return extra + "]\n"
 
 
 @dataclass
@@ -303,9 +314,11 @@ class Conversation:
             self.history = self.history[-2 * self.s.history_turns:]
             notes = self.thinker.take_notes() if self.thinker else ""
             use_tools = self.s.tools
-            messages = [{"role": "system", "content": system_prompt(self.s.name, use_tools, notes)}] + self.history
+            messages = [{"role": "system", "content": system_prompt(self.s.name, use_tools)}] + self.history
+            last = {"role": "user", "content": turn_context(notes) + (user_text if images else messages[-1]["content"])}
             if images:
-                messages[-1] = {"role": "user", "content": user_text, "images": images}
+                last["images"] = images
+            messages[-1] = last
 
             reply = self._generate(turn, messages, stop, use_tools, model)
             if not turn.approved:
@@ -350,11 +363,12 @@ class Conversation:
         """Stream the answer; run tools (web search) if the model asks for them."""
         chunker = SentenceChunker()
         answer: list[str] = []
+        usage: dict = {}
         printed_header = False
         for _round in range(self.s.max_tool_rounds + 1):
             calls = None
             tools = TOOLS if use_tools and _round < self.s.max_tool_rounds else None
-            for piece in self.llm.stream(model or self.s.model, messages, stop=stop, tools=tools):
+            for piece in self.llm.stream(model or self.s.model, messages, stop=stop, tools=tools, usage=usage):
                 if not self._current(turn) or stop.is_set():
                     return "".join(answer).strip()
                 if not isinstance(piece, str):
@@ -395,6 +409,9 @@ class Conversation:
                 return "".join(answer).strip()
         for chunk in chunker.flush():
             self._speak(turn, chunk)
+        if usage:
+            limit = getattr(self.llm, "num_ctx", 0) or 0
+            self.emit("kontext", benutzt=usage.get("prompt", 0) + usage.get("antwort", 0), limit=limit)
         self._wait_decision(turn)
         if turn.approved:
             if not printed_header:

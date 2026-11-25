@@ -32,10 +32,14 @@ def save_config(cfg: dict) -> None:
 
 def setup(cfg: dict) -> dict:
     """First start: ask for the assistant's name and how it should listen."""
+    from .terminal import choose, choose_name
+
     print("\n✨ Kurze Einrichtung (nur einmal, ändern mit --einrichten)\n")
-    name = input(f"  Wie soll dein Assistent heißen? [{cfg.get('name', 'Jarvis')}] ").strip() or cfg.get("name", "Jarvis")
-    ans = input(f"  Soll {name} nur reagieren, wenn du seinen Namen sagst? (empfohlen) [J/n] ").strip().lower()
-    cfg.update(name=name, zuhoeren="immer" if ans in ("n", "nein", "no") else "name")
+    name = choose_name(cfg.get("name"))
+    print()
+    modes = [f"Nur wenn ich „{name}“ sage  (empfohlen)", "Auf alles, was ich sage"]
+    i = choose(f"Wann soll {name} antworten?", modes, 0 if cfg.get("zuhoeren", "name") == "name" else 1)
+    cfg.update(name=name, zuhoeren="name" if i == 0 else "immer")
     save_config(cfg)
     print(f"  ✔ Gespeichert in {CONFIG}\n")
     return cfg
@@ -78,6 +82,7 @@ def parse_args(argv=None):
     p.add_argument("--ohne-bruecken", action="store_true", help="Keine Brückensätze wie 'Mhm' oder 'Gute Frage'")
     p.add_argument("--ohne-atmen", action="store_true", help="Kein leises Einatmen vor Antworten")
     p.add_argument("--ohne-websuche", action="store_true", help="Keine Websuche")
+    p.add_argument("--ohne-statuszeile", action="store_true", help="Keine Statuszeile oben im Terminal")
     p.add_argument("--nicht-proaktiv", action="store_true", help="Kein Vorausdenken und keine 'Übrigens …'-Vorschläge")
     p.add_argument("--version", action="version", version=f"jarvis-stimme {__version__}")
     return p.parse_args(argv)
@@ -219,6 +224,31 @@ def main(argv=None) -> int:
         print(f"   Du kannst {name} jederzeit unterbrechen, indem du einfach redest.")
     print()
 
+    # Status line at the top of the terminal: model, context tokens, microphone, speed.
+    from .terminal import StatusLine, context_text
+
+    status = StatusLine()
+    if a.ohne_statuszeile:
+        status.enabled = False
+    status.fields.update(name=f"🤖 {name}", modell=f"🧠 {model}",
+                         kontext=context_text(0, llm.num_ctx),
+                         mikro="⌨️ nur Tippen" if a.tippen else "🎙️ Mikro an")
+    states = {"bereit": "", "hoert": "👂 hört zu", "denkt": "💭 denkt", "spricht": "🔊 spricht"}
+
+    def on_status(ev: dict) -> None:
+        t = ev.get("typ")
+        if t == "kontext":
+            status.set(kontext=context_text(ev["benutzt"], ev["limit"] or llm.num_ctx))
+        elif t == "status":
+            status.set(zustand=states.get(ev["status"], ""))
+        elif t == "zeit":
+            status.set(zeit=f"⚡ {str(ev['sekunden']).replace('.', ',')} s")
+        elif t == "mikro":
+            status.set(mikro="🎙️ Mikro an" if ev["an"] else "🔇 Mikro aus")
+
+    conv.on_event = on_status
+    status.start()
+
     if a.gui:
         from .gui import serve
 
@@ -279,6 +309,7 @@ def main(argv=None) -> int:
         pass
     finally:
         conv.interrupt()
+        status.stop()
         if mic is not None:
             mic.close()
         player.close()

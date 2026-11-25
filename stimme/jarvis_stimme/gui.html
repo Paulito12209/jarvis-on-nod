@@ -207,7 +207,7 @@
 
   // ---------- events from Python ----------
   let lastImages = [];
-  let zeitChip = null;
+  let zeitChip = null, kontextChip = null;
   function handle(ev) {
     switch (ev.typ) {
       case "status": setStatus(ev.status); break;
@@ -236,6 +236,13 @@
         zeitChip.textContent = `⚡ ${String(ev.sekunden).replace(".", ",")} s`;
         zeitChip.title = ev.text;
         break;
+      case "kontext": {
+        if (!kontextChip) kontextChip = chip("");
+        const pct = ev.limit ? Math.round(100 * ev.benutzt / ev.limit) : 0;
+        kontextChip.textContent = `📚 ${ev.benutzt.toLocaleString("de-DE")} / ${ev.limit.toLocaleString("de-DE")} (${pct} %)`;
+        kontextChip.title = "Kontext: so viel vom Gedächtnis des Modells ist belegt";
+        break;
+      }
       case "fehler": meta("⚠️ " + ev.text, "fehler"); break;
     }
   }
