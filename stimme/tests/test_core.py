@@ -162,7 +162,7 @@ class FakeLLM:
     def __init__(self, tokens, delay=0.0):
         self.tokens, self.delay = tokens, delay
 
-    def stream(self, model, messages, stop=None):
+    def stream(self, model, messages, stop=None, tools=None, max_tokens=None):
         for t in self.tokens:
             if stop is not None and stop.is_set():
                 return
@@ -216,7 +216,7 @@ def test_turn_speaks_sentence_by_sentence_and_reports_time():
     conv.handle_audio(np.zeros(16000, np.int16)).join(5)
     assert tts.spoken == ["Es ist zehn Uhr.", "Schönen Abend!"]
     assert conv.history[-1] == {"role": "assistant", "content": "Es ist zehn Uhr. Schönen Abend!"}
-    assert any("bis zur ersten Silbe" in o for o in out)
+    assert any("bis zum ersten Ton" in o for o in out)
     assert not conv.assistant_busy
 
 

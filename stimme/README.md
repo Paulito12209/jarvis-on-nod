@@ -62,6 +62,51 @@ So siehst du genau, welcher Teil am meisten Zeit braucht.
 
 ---
 
+## ✨ Neu in Version 0.2: natürlicher, schlauer, aufmerksamer
+
+### 👋 Ein eigener Name
+Beim ersten Start fragt Jarvis: **„Wie soll dein Assistent heißen?“** Danach reagiert er nur, wenn du seinen Namen sagst, zum Beispiel „Jarvis, wie wird das Wetter?“.
+Nach einer Antwort bleibt das Gespräch **30 Sekunden offen**: Dann musst du den Namen nicht jedes Mal wiederholen.
+Einfach nur „Jarvis?“ sagen, und er antwortet sofort „Ja?“, ganz ohne Nachdenken.
+
+- „Jarvis, sei mal still“ oder „Jarvis, ich telefoniere“ → Ruhe, bis du ihn wieder beim Namen rufst.
+- Name ändern: `./scripts/jarvis-stimme.sh --einrichten`
+- Auf alles reagieren (wie früher): `--zuhoeren immer`
+
+### 🚦 Der Entscheider: „Ist das für mich?“
+Ein **kleines, blitzschnelles Modell** (bei dir `qwen3.5:2b`) hört mit und entscheidet in Bruchteilen einer Sekunde, ob du gerade mit Jarvis redest.
+Wenn du einem Freund eine WhatsApp diktierst („Schreib Tom, ich komme später“), telefonierst oder mit jemandem im Raum sprichst, bleibt Jarvis still.
+Damit es nicht langsamer wird, fängt das große Modell **gleichzeitig** schon an zu denken. Gesprochen wird erst, wenn der Entscheider „ja“ sagt.
+
+### 💬 Brückensätze und Einatmen
+Wie ein Mensch sagt Jarvis kurz **„Mhm.“**, **„Gute Frage.“**, **„Okay, mach ich.“** oder **„Oh, das klingt nicht schön.“**, wenn die echte Antwort noch nicht fertig ist. Es gibt **über 100 Sätze**, passend zur Situation (Frage, Bitte, Erzählung, Gefühl, Meinung, Suche). Sie werden beim Start einmal vorbereitet und kommen dann **ohne jede Wartezeit**.
+Ist das Modell schnell genug, lässt Jarvis die Brücke weg. Manchmal atmet er vorher auch leise ein.
+Ausschalten: `--ohne-bruecken` oder `--ohne-atmen`.
+
+### 🔎 Websuche
+Jarvis kann jetzt **im Internet suchen**, z. B. nach Spielständen, Nachrichten, Wetter oder Preisen. Das ist kostenlos und braucht keinen Schlüssel (DuckDuckGo).
+Nur die Suchwörter gehen ins Internet, deine Stimme und das Modell bleiben lokal. Während er sucht, sagt er „Moment, ich schau kurz nach.“
+Wer eine eigene Suchmaschine betreibt: `JARVIS_SEARXNG=http://localhost:8080`. Ausschalten: `--ohne-websuche`.
+
+### 🖼️ Bilder ansehen
+Zieh ein Bild ins Terminal-Fenster (oder tippe den Pfad) und drück Enter, gern mit einer Frage dazu:
+
+```
+/Users/du/Bilder/IMG_0943.HEIC Was ist auf dem Foto?
+```
+
+iPhone-Fotos (**HEIC**) werden automatisch umgewandelt. Jarvis nimmt dafür ein Modell, das sehen kann (z. B. `gemma4:12b`), auch wenn du sonst ein anderes nutzt. Ist keins da, sagt er das ehrlich.
+
+### ⌨️ Tippen und Sprechen gleichzeitig
+Du kannst jederzeit **tippen + Enter** drücken, auch während das Mikro an ist. Getipptes ist immer für Jarvis gemeint, ein Name ist dafür nicht nötig.
+
+### 🧠 Vorausdenken
+Wenn ihr kurz still seid, denkt Jarvis im Hintergrund über euer Thema nach und macht sich Notizen. Die nächste Antwort wird dadurch besser.
+Bleibt es länger still (40 Sekunden), bietet er manchmal von sich aus etwas an: „Übrigens, soll ich dir ein schnelles Rezept raussuchen?“ Sobald du redest, hört er sofort auf.
+Ausschalten: `--nicht-proaktiv`.
+
+---
+
 ## 🛠️ Die Tricks für Tempo
 
 | Trick | Warum es schneller ist |
@@ -110,7 +155,14 @@ Mit `--test` misst Jarvis alles einmal durch und zeigt dir die Zeiten. Probier r
 | `--geraete` | Mikrofone und Lautsprecher anzeigen |
 | `--mikro 2` / `--lautsprecher 3` | Bestimmtes Gerät nehmen |
 | `--stimme PFAD` | Andere Piper-Stimme (`.onnx`-Datei) |
-| `--name Friday` | Anderer Name für den Assistenten |
+| `--einrichten` | Name und Zuhör-Art neu festlegen |
+| `--zuhoeren immer` | Auf alles reagieren, nicht nur auf den Namen |
+| `--fenster 60` | So lange (Sekunden) nach einer Antwort ohne Namen weiterreden |
+| `--entscheider qwen3.5:2b` | Welches kleine Modell entscheidet („aus“ = keins) |
+| `--bildmodell gemma4:12b` | Welches Modell Bilder ansieht |
+| `--ohne-bruecken` / `--ohne-atmen` | Keine Brückensätze / kein Einatmen |
+| `--ohne-websuche` | Keine Websuche |
+| `--nicht-proaktiv` | Kein Vorausdenken, keine „Übrigens …“-Vorschläge |
 
 > 🎧 **Tipp:** Mit Kopfhörern klappt das Dazwischenreden am besten. Über Lautsprecher hört das Mikrofon Jarvis' eigene Stimme. Dafür ist die Empfindlichkeit beim Reden extra hoch eingestellt.
 
@@ -126,6 +178,9 @@ Mit `--test` misst Jarvis alles einmal durch und zeigt dir die Zeiten. Probier r
 | Jarvis fällt mir ins Wort | `--pause 0.9` |
 | Erste Antwort ist langsam | Normal beim allerersten Mal (Modelle werden geladen). Danach geht es schnell. |
 | Antworten sind zu lang/zu kurz | Einfach sagen: „Antworte bitte ausführlicher.“ |
+| Jarvis reagiert nicht | Sag seinen Namen am Anfang: „Jarvis, …“. Oder starte mit `--zuhoeren immer`. |
+| Jarvis antwortet, obwohl ich jemand anderen meine | `--fenster 10` (kürzeres Gesprächsfenster) |
+| „Websuche hat nicht geklappt“ | Internet prüfen. DuckDuckGo blockt manchmal kurz, dann einfach nochmal fragen. |
 
 ---
 
@@ -137,7 +192,12 @@ stimme/
 │   ├── __main__.py   ← Start, Optionen, --test
 │   ├── app.py        ← Gesprächs-Schleife: Turn-Logik, Barge-in, Zeitmessung
 │   ├── text.py       ← Satz-Zerleger für den Token-Strom, Markdown/Emoji-Filter
-│   ├── llm.py        ← Ollama /api/chat Streaming (nur Standardbibliothek), Modellwahl
+│   ├── llm.py        ← Ollama /api/chat Streaming + Tool-Calls (nur Standardbibliothek), Modellwahl
+│   ├── bruecken.py   ← 100+ Brückensätze, Situation erkennen, Einatmen
+│   ├── zuhoeren.py   ← Name, Gesprächsfenster, Ruhemodus, Entscheider-Modell (JSON-Schema)
+│   ├── werkzeuge.py  ← Websuche (ddgs / SearXNG)
+│   ├── bilder.py     ← Bildpfade finden, HEIC umwandeln (sips), Bild-Modell wählen
+│   ├── vorausdenken.py ← Hintergrund-Notizen und „Übrigens …“
 │   ├── stt.py        ← mlx-whisper (Apple Silicon) oder faster-whisper
 │   ├── tts.py        ← Piper, Stimmen-Suche
 │   ├── vad.py        ← Silero VAD (pysilero-vad, ohne PyTorch) + Turn-Erkennung
@@ -153,4 +213,4 @@ cd stimme && uv run --with pytest --with-editable . pytest -q
 
 Gesucht wird die Stimme in `~/.jarvis-stimme/stimmen`, `~/.openjarvis/voices/piper` und `~/.local/share/piper`.
 
-**Nächste Ideen:** Weckwort („Hey Jarvis“) mit openWakeWord, „Smart Turn“ (erkennt am Satzklang, ob du fertig bist, statt nur Stille), eigene Stimme klonen (Chatterbox / F5-TTS), kleines Web-Fenster mit leuchtender Kugel, Werkzeuge (Uhrzeit, Wetter, Timer).
+**Nächste Ideen:** Fenster (GUI) mit Mikro-Knopf, Live-Text und Bild-Ablage (kommt als Nächstes), „Smart Turn“ (erkennt am Satzklang, ob du fertig bist, statt nur Stille), eigene Stimme klonen (Chatterbox / F5-TTS), mehr Werkzeuge (Timer, Kalender, Dateien).
