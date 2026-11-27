@@ -83,6 +83,8 @@ def parse_args(argv=None):
     p.add_argument("--ohne-atmen", action="store_true", help="Kein leises Einatmen vor Antworten")
     p.add_argument("--ohne-websuche", action="store_true", help="Keine Websuche")
     p.add_argument("--ohne-statuszeile", action="store_true", help="Keine Statuszeile oben im Terminal")
+    p.add_argument("--einfach", action="store_true",
+                   help="Einfache Terminal-Ausgabe statt der Oberfläche mit Statusleiste und Eingabezeile")
     p.add_argument("--nicht-proaktiv", action="store_true", help="Kein Vorausdenken und keine 'Übrigens …'-Vorschläge")
     p.add_argument("--version", action="version", version=f"jarvis-stimme {__version__}")
     return p.parse_args(argv)
@@ -224,11 +226,18 @@ def main(argv=None) -> int:
         print(f"   Du kannst {name} jederzeit unterbrechen, indem du einfach redest.")
     print()
 
+    use_tui = not a.einfach and sys.stdin.isatty() and sys.stdout.isatty()
+    if use_tui:
+        try:
+            from .tui import TerminalUI
+        except ImportError:
+            use_tui = False
+
     # Status line at the top of the terminal: model, context tokens, microphone, speed.
     from .terminal import StatusLine, context_text
 
     status = StatusLine()
-    if a.ohne_statuszeile:
+    if a.ohne_statuszeile or use_tui:
         status.enabled = False
     status.fields.update(name=f"🤖 {name}", modell=f"🧠 {model}",
                          kontext=context_text(0, llm.num_ctx),
@@ -249,6 +258,18 @@ def main(argv=None) -> int:
     conv.on_event = on_status
     status.start()
 
+    tui = None
+    if use_tui:
+        def save_name(new: str) -> None:
+            cfg["name"] = new
+            save_config(cfg)
+
+        tui = TerminalUI(conv, {"modell": model, "kontext_limit": llm.num_ctx, "nur_tippen": a.tippen},
+                         save_name=save_name, history_file=APP_HOME / "eingaben.txt",
+                         stats_file=APP_HOME / "statistik.jsonl")
+        conv.out = lambda *x, **k: None  # everything goes through events into the interface
+        conv.on_event = tui.on_event
+
     if a.gui:
         from .gui import serve
 
@@ -258,14 +279,15 @@ def main(argv=None) -> int:
             serve(conv, info, port=a.port, open_browser=not a.kein_browser)
         except OSError as e:
             print(f"⚠️  Fenster ging nicht: {e}")
-    gui_on = a.gui
+    gui_on = a.gui or use_tui  # both show the microphone level
 
     mic = None
     try:
         if not a.tippen:
             mic = Microphone(device=_device(a.mikro))
             mic.start()
-            print("🎤 Ich höre zu – sprich einfach los (oder tippe).")
+            if not use_tui:
+                print("🎤 Ich höre zu – sprich einfach los (oder tippe).")
 
             def listen():
                 import numpy as np
@@ -285,6 +307,10 @@ def main(argv=None) -> int:
                         conv.emit("pegel", wert=round(level, 3))
 
             threading.Thread(target=listen, daemon=True).start()
+        if tui is not None:
+            APP_HOME.mkdir(parents=True, exist_ok=True)
+            tui.run()  # blocks until Ctrl+C, /ende or "Tschüss"
+            conv.finished.set()
         # Keyboard works at the same time as the microphone.
         keyboard_done = threading.Event()
 
@@ -300,7 +326,8 @@ def main(argv=None) -> int:
                 pass
             keyboard_done.set()
 
-        threading.Thread(target=keyboard, daemon=True).start()
+        if tui is None:
+            threading.Thread(target=keyboard, daemon=True).start()
         while not conv.finished.is_set():
             if a.tippen and keyboard_done.is_set():
                 break

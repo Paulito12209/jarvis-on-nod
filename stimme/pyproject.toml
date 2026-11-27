@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jarvis-stimme"
-version = "0.4.0"
+version = "0.5.0"
 description = "Schneller, komplett lokaler Sprachassistent auf Deutsch (Whisper + Ollama + Piper)"
 requires-python = ">=3.10"
 dependencies = [
@@ -13,6 +13,7 @@ dependencies = [
     "pysilero-vad>=3.0",
     "piper-tts>=1.3",
     "ddgs>=9.0",
+    "prompt-toolkit>=3.0.40",
     "pillow>=10; sys_platform != 'darwin'",
     "pillow-heif>=0.18; sys_platform != 'darwin'",
     "mlx-whisper>=0.4.2; sys_platform == 'darwin' and platform_machine == 'arm64'",

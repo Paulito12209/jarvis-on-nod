@@ -216,7 +216,8 @@ def test_turn_speaks_sentence_by_sentence_and_reports_time():
     conv.handle_audio(np.zeros(16000, np.int16)).join(5)
     assert tts.spoken == ["Es ist zehn Uhr.", "Schönen Abend!"]
     assert conv.history[-1] == {"role": "assistant", "content": "Es ist zehn Uhr. Schönen Abend!"}
-    assert any("bis zum ersten Ton" in o for o in out)
+    assert not any("bis zum ersten Ton" in o for o in out)  # timing lives in the status bar now
+    assert len(conv.stats) == 1 and conv.stats[0]["sekunden"] >= 0
     assert not conv.assistant_busy
 
 

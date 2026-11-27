@@ -228,3 +228,21 @@ def test_pick_small_model():
     assert pick_small_model(["qwen3.8:27b-mlx", "qwen3.5:2b", "gemma4:12b"]) == "qwen3.5:2b"
     assert pick_small_model(["foo:3b", "gemma4:12b"]) == "foo:3b"
     assert pick_small_model(["gemma4:12b"]) is None
+
+
+def test_bridge_never_lands_inside_the_answer_text():
+    tokens = ["Das", " ist", " eine", " der", " am", " hitzigsten", " diskutierten", " Fragen", " im", " Fußball."]
+    llm = ScriptLLM([tokens], delay=0.06)
+    c, tts, player, out = conv_with(llm, text="Wer ist besser, Messi oder Ronaldo?", fillers=True, filler_delay=0.05)
+    events = []
+    c.on_event = events.append
+    run(c)
+    joined = "".join(out)
+    i_bridge = next(i for i, o in enumerate(out) if "💬" in o)
+    i_answer = next(i for i, o in enumerate(out) if o.startswith("🤖"))
+    assert i_bridge < i_answer
+    assert "hitzigsten diskutierten" in joined.replace("\n", "")
+    kinds = [e["typ"] for e in events]
+    assert kinds.index("bruecke") < kinds.index("antwort_start")
+    shown = "".join(e.get("text", "") for e in events if e["typ"] in ("antwort_start", "token"))
+    assert shown == "Das ist eine der am hitzigsten diskutierten Fragen im Fußball."
