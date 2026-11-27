@@ -52,13 +52,7 @@ Das Skript macht alles allein: Es prüft Ollama, installiert die Programme (nur 
    ✋ Du kannst jederzeit dazwischenreden – dann hört Jarvis sofort auf.
 ```
 
-Nach jeder Antwort siehst du, wie schnell es war, zum Beispiel:
-
-```
-⚡ 0,72 s bis zur ersten Silbe  (Hören 0,25 · Denken 0,38 · Stimme 0,09)  + 0,60 s Pause-Erkennung
-```
-
-So siehst du genau, welcher Teil am meisten Zeit braucht.
+Wie schnell die letzte Antwort war, steht oben in der Statusleiste (siehe unten). Alle Antworten kannst du mit `/stats` nachschauen.
 
 ---
 
@@ -83,17 +77,48 @@ Das Fenster läuft in deinem Browser, aber nur auf deinem Computer (`http://127.
 
 ---
 
-## 📊 Statuszeile im Terminal
+## 🖥️ Terminal-Oberfläche (neu in 0.5)
 
-Oben im Terminal steht immer eine Zeile, die sich live aktualisiert:
+Im Terminal sieht Jarvis jetzt ähnlich aus wie Claude Code:
 
 ```
- 🤖 Jarvis · 🧠 gemma4:12b · Kontext ██░░░░░░░░ 1.734 / 8.192 Tokens (21 %) · 🎙️ Mikro an · ⚡ 0,9 s · 💭 denkt
+ 🤖 Jarvis · 🧠 gemma4:12b · 📚 █░░░░░ 1.734/8.192 (21 %) · letzte: ⚡0,9 s · 84 Tokens · 🎙️ an   ← Statusleiste
+Du › Wie steht es gerade beim FC Barcelona?
+💬 Sekunde, ich suche das raus.
+🔎 Suche: FC Barcelona Champions League live
+✓ 5 Treffer gefunden
+Jarvis › Barcelona führt gerade 2:1 gegen Bayern, es läuft die 68. Minute …
+
+ ⠹ sucht im Web … 1,2 s                                                     ← Lade-Anzeige
+› _                                                                         ← hier tippen
+ Enter senden · ^O Mikro · ^B Bild · Esc Stopp · /hilfe Befehle · ^C Ende   ← Tastenkürzel
 ```
 
-**Kontext** zeigt, wie viel vom „Notizblock“ des Modells schon belegt ist. Wenn der Balken voll wird, vergisst Jarvis den Anfang des Gesprächs. Mehr Platz gibt es mit `--kontext 16384`, das ist aber etwas langsamer. Ausschalten mit `--ohne-statuszeile`.
+- **Statusleiste oben**: Name, Modell, wie voll der Kontext ist, und wie schnell die **letzte** Antwort war. Keine Zeit-Zeile mehr unter jeder Antwort.
+- **Lade-Anzeige**: Ein drehendes Zeichen zeigt immer, was gerade passiert: „denkt …“, „sucht im Web …“, „schaut sich das Bild an …“, beim Zuhören ein Pegel ▁▃▆, beim Sprechen eine Welle.
+- **Eingabezeile** mit blinkendem Cursor, darunter die Tastenkürzel.
+- Der **Brückensatz** (💬) steht immer in einer eigenen Zeile vor der Antwort, nie mitten drin.
 
-Tippen und Sprechen laufen in **dieselbe Warteschlange**: Was zuletzt kommt, gewinnt, und Jarvis hört mit dem Alten sofort auf.
+| Taste / Befehl | Was passiert |
+|---|---|
+| `Enter` | Senden |
+| `↑` / `↓` | Frühere Eingaben (bleiben auch nach dem Neustart) |
+| `Esc` | Jarvis sofort stoppen |
+| `Ctrl+O` oder `/mikro` | Mikrofon an/aus |
+| `Ctrl+B` oder `/bild` | Bild auswählen (Mac: Finder-Fenster) |
+| `Bild↑` / `Bild↓` | Im Gespräch hoch- und runterblättern |
+| `Ctrl+L` oder `/leeren` | Bildschirm leeren |
+| `/name Friday` | Namen ändern (wird gespeichert) |
+| `/stats` | Zeit und Tokens der letzten 10 Antworten, mit Schnitt |
+| `/neu` | Neues Gespräch (Gedächtnis leeren) |
+| `/hilfe` | Alle Befehle |
+| `Ctrl+C` oder `/ende` | Beenden |
+
+**Jede Antwort wird mitgeschrieben** in `~/.jarvis-stimme/statistik.jsonl` (Uhrzeit, Sekunden bis zum ersten Ton, Tokens, ob gesucht wurde). So kannst du später jede Nachricht nachverfolgen.
+
+**Kontext** (📚) zeigt, wie viel vom „Notizblock“ des Modells schon belegt ist. Wenn der Balken voll wird, vergisst Jarvis den Anfang des Gesprächs. Mehr Platz gibt es mit `--kontext 16384`, das ist aber etwas langsamer.
+
+Tippen und Sprechen laufen in **dieselbe Warteschlange**: Was zuletzt kommt, gewinnt, und Jarvis hört mit dem Alten sofort auf. Mit `--gui` kommt zusätzlich das Fenster dazu. Die alte, schlichte Ansicht gibt es mit `--einfach`.
 
 ---
 
@@ -203,7 +228,8 @@ Mit `--test` misst Jarvis alles einmal durch und zeigt dir die Zeiten. Probier r
 | `--mikro 2` / `--lautsprecher 3` | Bestimmtes Gerät nehmen |
 | `--stimme PFAD` | Andere Piper-Stimme (`.onnx`-Datei) |
 | `--gui` | Mit Fenster starten |
-| `--ohne-statuszeile` | Keine Statuszeile oben |
+| `--einfach` | Schlichte Terminal-Ansicht statt der neuen Oberfläche |
+| `--ohne-statuszeile` | In der schlichten Ansicht: keine Statuszeile oben |
 | `--port 8800` / `--kein-browser` | Anderer Port / Fenster nicht automatisch öffnen |
 | `--einrichten` | Name und Zuhör-Art neu festlegen |
 | `--zuhoeren immer` | Auf alles reagieren, nicht nur auf den Namen |
@@ -250,6 +276,7 @@ stimme/
 │   ├── vorausdenken.py ← Hintergrund-Notizen und „Übrigens …“
 │   ├── gui.py / gui.html ← Fenster: lokaler Server (SSE), Upload, Mikro-Schalter
 │   ├── terminal.py   ← Pfeiltasten-Menü (Namenswahl), Statuszeile oben
+│   ├── tui.py        ← Terminal-Oberfläche (prompt_toolkit): Statusleiste, Spinner, Eingabe, Befehle
 │   ├── stt.py        ← mlx-whisper (Apple Silicon) oder faster-whisper
 │   ├── tts.py        ← Piper, Stimmen-Suche
 │   ├── vad.py        ← Silero VAD (pysilero-vad, ohne PyTorch) + Turn-Erkennung

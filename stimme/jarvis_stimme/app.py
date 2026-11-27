@@ -11,6 +11,7 @@ Everything runs at the same time:
 from __future__ import annotations
 
 import queue
+import re
 import threading
 import time
 from dataclasses import dataclass
@@ -92,7 +93,7 @@ class Settings:
     vad_threshold: float = 0.5
     history_turns: int = 12
     name: str = "Jarvis"
-    show_times: bool = True
+    show_times: bool = False  # timing line under every answer (now shown in the status bar)
     listen_mode: str = "immer"  # "immer" or "name"
     window: float = 30.0  # seconds after an answer in which no name is needed
     filler_delay: float = 0.35  # play a bridge phrase if the answer is not ready after this
@@ -109,7 +110,11 @@ class _Turn:
     def __init__(self, my_id: int, times: TurnTimes):
         self.id = my_id
         self.times = times
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
+        self.shown = False  # the answer text is visible on screen
+        self.display: list[str] = []  # text waiting to be shown (so bridges print before it)
+        self.usage: dict = {}
+        self.searched = False
         self.spoken_any = False  # a real answer chunk was queued
         self.filler_played = False
         self.decided = threading.Event()
@@ -136,6 +141,7 @@ class Conversation:
         self.last_activity = time.monotonic()
         self.last_answer = 0.0
         self.listening = True  # microphone on/off (GUI button)
+        self.stats: list[dict] = []  # one entry per answer: time to first sound, tokens …
         self.on_event = None  # callback(dict) for the GUI
         threading.Thread(target=self._tts_worker, daemon=True).start()
 
@@ -336,10 +342,17 @@ class Conversation:
             if self._current(turn):
                 self.attention.open_window()
                 self.last_answer = time.monotonic()
-                if self.s.show_times and times.first_audio:
-                    self.out(times.summary(self.s.pause))
-                    self.emit("zeit", sekunden=round(times.first_audio - times.end_of_speech, 2),
-                              text=times.summary(self.s.pause))
+                if times.first_audio:
+                    if self.s.show_times:
+                        self.out(times.summary(self.s.pause))
+                    secs = round(times.first_audio - times.end_of_speech, 2)
+                    self.emit("zeit", sekunden=secs, text=times.summary(self.s.pause))
+                    entry = {"uhrzeit": datetime.now().strftime("%H:%M:%S"), "sekunden": secs,
+                             "tokens_frage": turn.usage.get("prompt", 0),
+                             "tokens_antwort": turn.usage.get("antwort", 0),
+                             "bruecke": times.filler, "websuche": turn.searched}
+                    self.stats.append(entry)
+                    self.emit("statistik", **entry)
                 if self.thinker and not goodbye:
                     self.thinker.start(self.history)
                 if goodbye:
@@ -363,8 +376,7 @@ class Conversation:
         """Stream the answer; run tools (web search) if the model asks for them."""
         chunker = SentenceChunker()
         answer: list[str] = []
-        usage: dict = {}
-        printed_header = False
+        usage = turn.usage
         for _round in range(self.s.max_tool_rounds + 1):
             calls = None
             tools = TOOLS if use_tools and _round < self.s.max_tool_rounds else None
@@ -376,14 +388,13 @@ class Conversation:
                     continue
                 if not turn.times.first_token:
                     turn.times.first_token = time.monotonic()
-                if not printed_header and turn.approved:
-                    self.out(f"🤖 {self.s.name}: ", end="")
-                    printed_header = True
-                    self.emit("antwort_start", text="".join(answer))
                 answer.append(piece)
-                if printed_header:
-                    self.out(piece, end="")
-                    self.emit("token", text=piece)
+                with turn.lock:
+                    if turn.shown:
+                        self.out(piece, end="")
+                        self.emit("token", text=piece)
+                    else:
+                        turn.display.append(piece)
                 for chunk in chunker.feed(piece):
                     self._speak(turn, chunk)
                 if turn.decided.is_set() and not turn.approved:
@@ -395,6 +406,7 @@ class Conversation:
             self._wait_decision(turn)
             if not turn.approved:
                 return ""
+            turn.searched = True
             self._play_filler(turn, "suche", force=True)
             messages = messages + [{"role": "assistant", "content": "".join(answer), "tool_calls": list(calls)}]
             for call in calls:
@@ -404,6 +416,8 @@ class Conversation:
                 self.out(f"🔎 Suche: {q}")
                 self.emit("suche", text=str(q))
                 result = run_tool(fn.get("name", ""), args)
+                hits = sum(1 for line in result.splitlines() if re.match(r"\d+\.\s", line))
+                self.emit("suche_fertig", treffer=hits)
                 messages.append({"role": "tool", "content": result, "tool_name": fn.get("name", "")})
             if not self._current(turn):
                 return "".join(answer).strip()
@@ -413,14 +427,24 @@ class Conversation:
             limit = getattr(self.llm, "num_ctx", 0) or 0
             self.emit("kontext", benutzt=usage.get("prompt", 0) + usage.get("antwort", 0), limit=limit)
         self._wait_decision(turn)
-        if turn.approved:
-            if not printed_header:
-                self.out(f"🤖 {self.s.name}: {''.join(answer).strip()}")
-                self.emit("antwort_start", text="".join(answer).strip())
-            else:
+        with turn.lock:
+            if turn.approved and self._current(turn):
+                self._show(turn)
                 self.out("")
-            self.emit("antwort_ende")
+                self.emit("antwort_ende")
         return "".join(answer).strip()
+
+    def _show(self, turn: _Turn) -> None:
+        """Make the answer visible (call with turn.lock held). Bridges printed before stay before."""
+        if turn.shown or not turn.approved:
+            return
+        turn.shown = True
+        text = "".join(turn.display).lstrip()
+        if turn.filler_played and text:
+            text = strip_leading_filler(text)
+        turn.display = []
+        self.out(f"🤖 {self.s.name}: {text}", end="")
+        self.emit("antwort_start", text=text)
 
     # -- deciding ----------------------------------------------------------------------
     def _ask_router(self, turn: _Turn, text: str) -> None:
@@ -428,6 +452,7 @@ class Conversation:
             ok = self.router.is_for_me(text, self.history[:-1] if self.history else [])
         except Exception as e:  # router broken -> just answer
             self.out(f"\n⚠️  Entscheider-Fehler: {e}")
+            self.emit("fehler", text=f"Entscheider: {e}")
             ok = True
         self._approve(turn, ok)
 
@@ -441,6 +466,8 @@ class Conversation:
             if ok:
                 for chunk in pending:
                     self._tts_q.put((turn.id, chunk, turn.times))
+                if pending:
+                    self._show(turn)
 
     def _wait_decision(self, turn: _Turn, timeout: float = 4.0) -> None:
         if not turn.decided.wait(timeout):
@@ -457,7 +484,8 @@ class Conversation:
             if not turn.approved:
                 turn.pending.append(chunk)
                 return
-        self._tts_q.put((turn.id, chunk, turn.times))
+            self._tts_q.put((turn.id, chunk, turn.times))
+            self._show(turn)
 
     def _say_now(self, turn: _Turn, text: str) -> None:
         self.out(f"🤖 {self.s.name}: {text}")
@@ -490,17 +518,21 @@ class Conversation:
             if not turn.times.first_chunk:
                 turn.times.first_chunk = time.monotonic()
             breath = self.fillers.maybe_breath() if kind not in ("hallo", "suche") else None
-        times = turn.times
+            times = turn.times
 
-        def mark(t=times):
-            if not t.first_audio:
-                t.first_audio = time.monotonic()
+            def mark(t=times):
+                if not t.first_audio:
+                    t.first_audio = time.monotonic()
 
-        if breath is not None:
-            self.player.play(breath, on_start=mark)
-        self.player.play(audio, on_start=mark)
-        self.out(f"   💬 {phrase}")
-        self.emit("bruecke", text=phrase)
+            if breath is not None:
+                self.player.play(breath, on_start=mark)
+            self.player.play(audio, on_start=mark)
+            # Printed while holding the lock, so it can never land in the middle of the answer.
+            if turn.shown:
+                self.out("")
+                turn.shown = False  # the rest of the answer starts on a fresh line
+            self.out(f"   💬 {phrase}")
+            self.emit("bruecke", text=phrase)
         return phrase
 
     def _tts_worker(self) -> None:
@@ -521,5 +553,6 @@ class Conversation:
                 self.player.play(audio, on_start=mark)
             except Exception as e:
                 self.out(f"\n⚠️  Stimme-Fehler: {e}")
+                self.emit("fehler", text=f"Stimme: {e}")
             finally:
                 self._tts_q.task_done()
