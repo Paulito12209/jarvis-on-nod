@@ -12,3 +12,9 @@ Copyright 2026 n8n GmbH, lizenziert unter der Apache License 2.0
 und wird nicht von n8n betrieben oder unterstützt.
 
 Die Ollama- und LM-Studio-Namen gehören ihren jeweiligen Inhabern.
+
+Jarvis Stimme (Ordner stimme/) lädt bei der Installation fremde Programme
+und Modelle, die nicht Teil dieses Repos sind, u. a.: Piper TTS (GPL-3.0),
+die Stimme "Thorsten" (Thorsten Müller, CC0), Whisper (MIT, OpenAI),
+mlx-whisper (MIT), faster-whisper (MIT), Silero VAD (MIT), sounddevice (MIT), ddgs (MIT).
+Es gelten jeweils deren Lizenzen.

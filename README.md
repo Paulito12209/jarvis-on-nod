@@ -13,6 +13,7 @@
   <a href="#schritt-1">🪜 Schritt für Schritt</a> ·
   <a href="#sprechen">🎙️ Sprechen &amp; Hintergrund</a> ·
   <a href="#modelle">🧠 Welches Modell?</a> ·
+  <a href="stimme/README.md">🎙️ Jarvis Stimme</a> ·
   <a href="#profis">🧑‍💻 Für Profis</a> ·
   <a href="#hilfe">🆘 Hilfe</a>
 </p>
@@ -40,6 +41,12 @@ Zusammen sind sie dein **Jarvis**. 🎉
 - 🔒 Deine Fragen und Gespräche gehen nicht an eine fremde KI-Firma.
 - 💶 Es kostet nichts pro Frage. Kein Abo.
 - ✈️ Das Gehirn funktioniert auch ohne Internet. (Für Websuche brauchst du natürlich Internet.)
+
+> 🎙️ **Neu: Jarvis Stimme.** Du willst einfach mit Jarvis *reden*, und er antwortet sofort mit deutscher Stimme? Das geht mit einem Befehl, komplett lokal:
+> ```sh
+> bash <(curl -fsSL https://raw.githubusercontent.com/Paulito12209/jarvis-on-nod/main/scripts/jarvis-stimme.sh)
+> ```
+> Alles dazu steht in **[stimme/README.md](stimme/README.md)**.
 
 ---
 
@@ -611,7 +618,9 @@ jarvis-on-nod/
 ├── scripts/
 │   ├── jarvis-mac.sh         ← Helfer-Befehl für den Mac (einrichten + prüfen)
 │   ├── jarvis-sprechen.sh    ← Freihand-Sprechmodus (experimentell)
+│   ├── jarvis-stimme.sh      ← startet Jarvis Stimme (reden statt tippen)
 │   └── jarvis-windows.ps1    ← Helfer-Befehl für Windows 11
+├── stimme/                  ← Jarvis Stimme: schneller Sprachassistent (Python)
 ├── docs/
 │   ├── bilder/               ← alle Bilder dieser Anleitung
 │   └── quellen/              ← Quelldateien der Bilder (HTML), zum Ändern

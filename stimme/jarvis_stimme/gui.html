@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jarvis Stimme</title>
+<style>
+  :root {
+    --bg: #05070d;
+    --panel: rgba(255,255,255,0.04);
+    --line: rgba(255,255,255,0.09);
+    --text: #e8eefc;
+    --muted: #8a94ad;
+    --accent: #5aa9ff;
+    --hoert: #3ee6a0;
+    --denkt: #a77bff;
+    --spricht: #38d6ff;
+    --fehler: #ff6b7a;
+    --orb: var(--accent);
+    --level: 0;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: radial-gradient(1200px 700px at 50% -10%, #0e1a33 0%, var(--bg) 60%) fixed, var(--bg);
+    color: var(--text);
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px 4px; gap: 10px;
+  }
+  .brand { font-weight: 650; letter-spacing: .02em; }
+  .brand { white-space: nowrap; }
+  .brand small { color: var(--muted); font-weight: 400; margin-left: 6px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .chip {
+    font-size: 12px; color: var(--muted); border: 1px solid var(--line);
+    padding: 3px 9px; border-radius: 999px; background: var(--panel); white-space: nowrap;
+  }
+  .chip.fast { color: var(--hoert); border-color: rgba(62,230,160,.35); }
+
+  /* ---------- Orb ---------- */
+  .stage { display: flex; flex-direction: column; align-items: center; padding: 8px 0 6px; }
+  .orb-wrap { position: relative; width: 168px; height: 168px; transition: width .4s, height .4s; }
+  body.gespraech .orb-wrap { width: 96px; height: 96px; }
+  body.gespraech .orb { inset: 12px; }
+  .orb {
+    position: absolute; inset: 18px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffffffcc 0%, var(--orb) 22%, color-mix(in srgb, var(--orb) 40%, #000) 70%, #000 100%);
+    box-shadow: 0 0 calc(40px + var(--level) * 60px) color-mix(in srgb, var(--orb) 70%, transparent),
+                inset 0 0 30px #0008;
+    transform: scale(calc(1 + var(--level) * 0.18));
+    transition: transform .08s linear, box-shadow .2s, background .4s;
+  }
+  .ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 1.5px solid color-mix(in srgb, var(--orb) 55%, transparent);
+    opacity: .0; transform: scale(.8);
+  }
+  body[data-status="denkt"] .ring { animation: ping 1.4s ease-out infinite; }
+  body[data-status="denkt"] .ring:nth-child(2) { animation-delay: .7s; }
+  body[data-status="spricht"] .orb { animation: talk .45s ease-in-out infinite alternate; }
+  body[data-status="bereit"] .orb { animation: breathe 4s ease-in-out infinite; }
+  @keyframes ping { 0% { opacity: .9; transform: scale(.75); } 100% { opacity: 0; transform: scale(1.25); } }
+  @keyframes talk { from { transform: scale(1); } to { transform: scale(1.09); } }
+  @keyframes breathe { 0%,100% { transform: scale(.97); } 50% { transform: scale(1.02); } }
+  body[data-status="hoert"] { --orb: var(--hoert); }
+  body[data-status="denkt"] { --orb: var(--denkt); }
+  body[data-status="spricht"] { --orb: var(--spricht); }
+  body[data-mikro="aus"] { --orb: #59627a; }
+  .status { margin-top: 6px; color: var(--muted); font-size: 13px; min-height: 18px; }
+
+  /* ---------- Transcript ---------- */
+  main {
+    flex: 1; overflow-y: auto; padding: 6px 16px 12px;
+    display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth;
+  }
+  .msg { max-width: 84%; padding: 9px 13px; border-radius: 16px; white-space: pre-wrap; word-wrap: break-word; }
+  .du { align-self: flex-end; background: #1b3b6e; border-bottom-right-radius: 5px; }
+  .du.getippt::before { content: "⌨️ "; }
+  .er { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); border-bottom-left-radius: 5px; }
+  .meta { align-self: center; color: var(--muted); font-size: 12.5px; text-align: center; max-width: 92%; }
+  .meta.fehler { color: var(--fehler); }
+  .bruecke { color: var(--muted); font-style: italic; }
+  .msg img { display: block; max-width: 220px; max-height: 220px; border-radius: 10px; margin-bottom: 6px; }
+  .leer { margin: auto; text-align: center; color: var(--muted); max-width: 340px; }
+  .leer b { color: var(--text); }
+
+  /* ---------- Input ---------- */
+  footer { padding: 10px 12px 14px; border-top: 1px solid var(--line); background: #070a12cc; backdrop-filter: blur(8px); }
+  .previews { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+  .previews:empty { display: none; }
+  .prev { position: relative; }
+  .prev img { width: 56px; height: 56px; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+  .prev .x { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%;
+             border: 0; background: #333a; color: #fff; cursor: pointer; font-size: 12px; line-height: 20px; padding: 0; }
+  .prev .lädt { position: absolute; inset: 0; border-radius: 8px; background: #000a; display: grid; place-items: center; font-size: 11px; }
+  .bar { display: flex; gap: 8px; align-items: flex-end; }
+  textarea {
+    flex: 1; resize: none; max-height: 140px; min-height: 44px;
+    background: var(--panel); color: var(--text); border: 1px solid var(--line);
+    border-radius: 14px; padding: 11px 13px; font: inherit; outline: none;
+  }
+  textarea:focus { border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+  button.icon {
+    width: 44px; height: 44px; flex: none; border-radius: 50%; border: 1px solid var(--line);
+    background: var(--panel); color: var(--text); font-size: 19px; cursor: pointer;
+    display: grid; place-items: center; transition: background .15s, transform .1s;
+  }
+  button.icon:hover { background: rgba(255,255,255,.09); }
+  button.icon:active { transform: scale(.94); }
+  #mikro.an { background: color-mix(in srgb, var(--hoert) 25%, transparent); border-color: color-mix(in srgb, var(--hoert) 55%, transparent); }
+  #senden { background: var(--accent); border-color: var(--accent); color: #031022; }
+  .hint { color: var(--muted); font-size: 11.5px; margin-top: 6px; text-align: center; }
+  .drop {
+    position: fixed; inset: 0; display: none; place-items: center; z-index: 9;
+    background: #05070dd9; border: 2px dashed var(--accent); font-size: 18px;
+  }
+  body.ziehen .drop { display: grid; }
+  .offline { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: var(--fehler);
+             color: #fff; padding: 5px 12px; border-radius: 999px; font-size: 13px; display: none; z-index: 10; }
+  body.getrennt .offline { display: block; }
+</style>
+</head>
+<body data-status="bereit" data-mikro="an">
+  <div class="offline">Verbindung zu Jarvis weg – läuft das Terminal noch?</div>
+  <header>
+    <div class="brand"><span id="name">Jarvis</span><small>Stimme · lokal</small></div>
+    <div class="chips" id="chips"></div>
+  </header>
+
+  <section class="stage" aria-live="polite">
+    <div class="orb-wrap" aria-hidden="true"><div class="ring"></div><div class="ring"></div><div class="orb"></div></div>
+    <div class="status" id="status">Bereit</div>
+  </section>
+
+  <main id="log">
+    <div class="leer" id="leer">
+      Sag einfach <b>„<span class="nm">Jarvis</span>, …“</b> oder tippe unten.<br>
+      Bilder kannst du hier <b>reinziehen</b> oder mit <b>⌘V</b> einfügen.
+    </div>
+  </main>
+
+  <footer>
+    <div class="previews" id="previews"></div>
+    <div class="bar">
+      <button class="icon an" id="mikro" title="Mikrofon an/aus (M)">🎙️</button>
+      <button class="icon" id="anhang" title="Bild anhängen">📎</button>
+      <textarea id="eingabe" rows="1" placeholder="Schreib etwas … (Enter = senden)"></textarea>
+      <button class="icon" id="stopp" title="Stopp (Esc)">⏹</button>
+      <button class="icon" id="senden" title="Senden">➤</button>
+    </div>
+    <div class="hint">Enter senden · Shift+Enter neue Zeile · Esc stoppt · alles bleibt auf deinem Computer</div>
+    <input type="file" id="datei" accept="image/*,.heic,.heif" multiple hidden>
+  </footer>
+  <div class="drop">🖼️ Bild hier loslassen</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const log = $("log"), eingabe = $("eingabe"), previews = $("previews");
+  const STATUS = { bereit: "Bereit", hoert: "Ich höre zu …", denkt: "Ich denke …", spricht: "Ich spreche …" };
+  let current = null;          // bubble of the answer being streamed
+  let pending = [];            // uploaded images waiting to be sent: {pfad, url}
+  let name = "Jarvis";
+  let mikroAn = true;
+
+  function scroll() { log.scrollTop = log.scrollHeight; }
+  function hideEmpty() { const l = $("leer"); if (l) l.remove(); document.body.classList.add("gespraech"); }
+  function bubble(cls, text) {
+    hideEmpty();
+    const d = document.createElement("div");
+    d.className = "msg " + cls;
+    if (text) d.textContent = text;
+    log.appendChild(d);
+    scroll();
+    return d;
+  }
+  function meta(text, cls = "") {
+    hideEmpty();
+    const d = document.createElement("div");
+    d.className = "meta " + cls;
+    d.textContent = text;
+    log.appendChild(d);
+    scroll();
+  }
+  function setStatus(s) {
+    document.body.dataset.status = s;
+    $("status").textContent = mikroAn || s !== "bereit" ? (STATUS[s] || s) : "Mikrofon aus – tippen geht trotzdem";
+  }
+  function setMikro(on) {
+    mikroAn = on;
+    document.body.dataset.mikro = on ? "an" : "aus";
+    $("mikro").classList.toggle("an", on);
+    $("mikro").textContent = on ? "🎙️" : "🔇";
+    setStatus(document.body.dataset.status);
+  }
+  function chip(text, cls = "") {
+    const c = document.createElement("span");
+    c.className = "chip " + cls;
+    c.textContent = text;
+    $("chips").appendChild(c);
+    return c;
+  }
+
+  // ---------- events from Python ----------
+  let lastImages = [];
+  let zeitChip = null, kontextChip = null;
+  function handle(ev) {
+    switch (ev.typ) {
+      case "status": setStatus(ev.status); break;
+      case "mikro": setMikro(ev.an); break;
+      case "pegel": document.body.style.setProperty("--level", Math.min(1, ev.wert * 1.2).toFixed(2)); break;
+      case "du": {
+        const b = bubble("du" + (ev.getippt ? " getippt" : ""));
+        const clean = ev.text.replace(/'[^']*\/jarvis-stimme\/bilder\/[^']*'\s*/g, "").trim();
+        for (const url of lastImages) { const im = new Image(); im.src = url; b.appendChild(im); }
+        lastImages = [];
+        b.appendChild(document.createTextNode(clean));
+        current = null;
+        break;
+      }
+      case "ignoriert": meta(`💤 „${ev.text}“ – ${ev.grund}`); break;
+      case "bruecke": bubble("er bruecke", ev.text); break;
+      case "suche": meta(`🔎 Suche: ${ev.text}`); break;
+      case "bild": meta("🖼️ Bild wird angesehen …"); break;
+      case "antwort_start": current = bubble("er", ev.text || ""); break;
+      case "token": if (!current) current = bubble("er", ""); current.textContent += ev.text; scroll(); break;
+      case "antwort_ende": current = null; break;
+      case "unterbrochen": meta("✋ unterbrochen"); current = null; break;
+      case "vorschlag": bubble("er", "💡 " + ev.text); break;
+      case "zeit":
+        if (!zeitChip) zeitChip = chip("", "fast");
+        zeitChip.textContent = `⚡ ${String(ev.sekunden).replace(".", ",")} s`;
+        zeitChip.title = ev.text;
+        break;
+      case "kontext": {
+        if (!kontextChip) kontextChip = chip("");
+        const pct = ev.limit ? Math.round(100 * ev.benutzt / ev.limit) : 0;
+        kontextChip.textContent = `📚 ${ev.benutzt.toLocaleString("de-DE")} / ${ev.limit.toLocaleString("de-DE")} (${pct} %)`;
+        kontextChip.title = "Kontext: so viel vom Gedächtnis des Modells ist belegt";
+        break;
+      }
+      case "fehler": meta("⚠️ " + ev.text, "fehler"); break;
+    }
+  }
+
+  function connect() {
+    const es = new EventSource("/events");
+    es.onopen = () => document.body.classList.remove("getrennt");
+    es.onmessage = (m) => { try { handle(JSON.parse(m.data)); } catch (e) { console.error(e); } };
+    es.onerror = () => { document.body.classList.add("getrennt"); };
+  }
+
+  fetch("/info").then(r => r.json()).then(info => {
+    name = info.name || name;
+    $("name").textContent = name;
+    document.title = name + " Stimme";
+    document.querySelectorAll(".nm").forEach(e => e.textContent = name);
+    chip("🧠 " + info.modell);
+    if (info.bildmodell) chip("🖼️ " + info.bildmodell);
+    if (info.websuche) chip("🔎 Web");
+    setMikro(info.mikro);
+    if (info.nur_tippen) { $("mikro").disabled = true; $("mikro").title = "Gestartet mit --tippen"; }
+  }).catch(() => {});
+  connect();
+
+  // ---------- sending ----------
+  async function senden() {
+    const text = eingabe.value.trim();
+    const ready = pending.filter(p => p.pfad);
+    if (!text && !ready.length) return;
+    lastImages = ready.map(p => p.url);
+    await fetch("/text", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text, bilder: ready.map(p => p.pfad) }) });
+    eingabe.value = ""; autoGrow();
+    pending = []; previews.innerHTML = "";
+  }
+  $("senden").onclick = senden;
+  eingabe.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); senden(); }
+  });
+  function autoGrow() { eingabe.style.height = "auto"; eingabe.style.height = Math.min(140, eingabe.scrollHeight) + "px"; }
+  eingabe.addEventListener("input", autoGrow);
+
+  $("stopp").onclick = () => fetch("/stopp", { method: "POST" });
+  $("mikro").onclick = () => fetch("/mikro", { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ an: !mikroAn }) }).then(r => r.json()).then(d => setMikro(d.mikro));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") $("stopp").click();
+    if (e.key.toLowerCase() === "m" && document.activeElement !== eingabe && !e.metaKey && !e.ctrlKey) $("mikro").click();
+  });
+
+  // ---------- images: pick, drop, paste ----------
+  async function addFiles(files) {
+    for (const f of files) {
+      if (!(f.type.startsWith("image/") || /\.(heic|heif)$/i.test(f.name))) continue;
+      const item = { pfad: null, url: URL.createObjectURL(f) };
+      pending.push(item);
+      const box = document.createElement("div");
+      box.className = "prev";
+      const im = new Image(); im.src = item.url; im.alt = f.name;
+      const wait = document.createElement("div"); wait.className = "lädt"; wait.textContent = "lädt …";
+      const x = document.createElement("button"); x.className = "x"; x.textContent = "✕"; x.title = "Entfernen";
+      x.onclick = () => { pending = pending.filter(p => p !== item); box.remove(); };
+      box.append(im, wait, x);
+      previews.appendChild(box);
+      try {
+        const r = await fetch("/bild", { method: "POST", headers: { "X-Dateiname": encodeURIComponent(f.name || "bild.png") }, body: f });
+        const d = await r.json();
+        if (d.pfad) { item.pfad = d.pfad; wait.remove(); } else { wait.textContent = "Fehler"; }
+      } catch { wait.textContent = "Fehler"; }
+    }
+    eingabe.focus();
+  }
+  $("anhang").onclick = () => $("datei").click();
+  $("datei").onchange = (e) => { addFiles(e.target.files); e.target.value = ""; };
+  let dragDepth = 0;
+  window.addEventListener("dragenter", (e) => { e.preventDefault(); dragDepth++; document.body.classList.add("ziehen"); });
+  window.addEventListener("dragleave", () => { if (--dragDepth <= 0) { dragDepth = 0; document.body.classList.remove("ziehen"); } });
+  window.addEventListener("dragover", (e) => e.preventDefault());
+  window.addEventListener("drop", (e) => {
+    e.preventDefault(); dragDepth = 0; document.body.classList.remove("ziehen");
+    addFiles(e.dataTransfer.files);
+  });
+  window.addEventListener("paste", (e) => {
+    const files = [...(e.clipboardData?.files || [])];
+    if (files.length) { e.preventDefault(); addFiles(files); }
+  });
+  eingabe.focus();
+})();
+</script>
+</body>
+</html>
